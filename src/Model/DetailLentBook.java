@@ -129,7 +129,6 @@ public class DetailLentBook extends DataAccessHelper {
         String sqlCommand = "INSERT INTO chitietmuonsach (maThongTinMuonSach, maBanSaoSach,trangThai) VALUES (?, ?, 0)";
         PreparedStatement st = conn.prepareStatement(sqlCommand);
         st.setString(1, maThongTinMuonTra);
-        //  System.out.println( new CoppyOfBook().getListCoppyOfBookByIdBook(book.getIdBook()).get(numberOfCopy - 1).getIdCppyOfBook());
         st.setString(2, new CopyOfBook().getListCopyOfBookByIdBook(book.getbook_ID()).get(numberOfCopy - 1).getcopy_of_book_ID());
         st.executeUpdate();
 

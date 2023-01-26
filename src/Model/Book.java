@@ -1,14 +1,9 @@
 package Model;
 
-import Controller.BookDetailController;
+import Controller.BookDetail_Controller;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.logging.*;
-
-import static Model.DataAccessHelper.conn;
-
-import Model.CopyOfBook;
-import Model.Publisher;
 
 public class Book extends DataAccessHelper {
     private String book_ID;
@@ -366,7 +361,7 @@ public class Book extends DataAccessHelper {
             return dataTable;
 
         } catch (SQLException ex) {
-            Logger.getLogger(BookDetailController.class.getName()).log(Level.SEVERE, "Bản sao sách không tồn tại!", "");
+            Logger.getLogger(BookDetail_Controller.class.getName()).log(Level.SEVERE, "Bản sao sách không tồn tại!", "");
         }
         return dataTable;
     }
@@ -398,7 +393,7 @@ public class Book extends DataAccessHelper {
             a[3] = Author;
             closeDatabase();
         } catch (SQLException ex) {
-            Logger.getLogger(BookDetailController.class.getName()).log(Level.SEVERE, "Sách không tồn tại!", "");
+            Logger.getLogger(BookDetail_Controller.class.getName()).log(Level.SEVERE, "Sách không tồn tại!", "");
         }
         return a;
     }
