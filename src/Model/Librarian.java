@@ -1,7 +1,6 @@
 package Model;
 
 import java.sql.*;
-import java.util.logging.*;
 
 public class Librarian extends User {
 
