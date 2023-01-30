@@ -4,10 +4,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import Model.*;
 
-/**
- *
- * @author tungts
- */
 public class Book_Controller {
 
     private Book book = new Book();

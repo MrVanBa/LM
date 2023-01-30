@@ -9,10 +9,6 @@ package Controller;
 import Model.*;
 import java.sql.*;
 
-/**
- *
- * @author Nguyen Thanh Tung
- */
 public class Create_BorrowingCard_Controller extends DataAccessHelper{
 
 

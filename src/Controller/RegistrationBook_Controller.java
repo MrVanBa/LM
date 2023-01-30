@@ -11,10 +11,6 @@ import java.util.*;
 import java.util.logging.*;
 import Model.*;
 
-/**
- *
- * @author 2&G
- */
 public class RegistrationBook_Controller {
 
     Book book;

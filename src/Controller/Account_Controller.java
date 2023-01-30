@@ -8,10 +8,6 @@ package Controller;
 import java.sql.SQLException;
 import Model.User;
 
-/**
- *
- * @author tungts
- */
 public class Account_Controller {
 
     User user = new User();

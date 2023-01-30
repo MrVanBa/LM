@@ -5,10 +5,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import Model.*;
 
-/**
- *
- * @author Nguyen Thanh Tung
- */
 public class ReturnBook_Controller extends DataAccessHelper {
 
     public Object[] getBookIsBorrowed(String maNguoiMuon) throws SQLException, ClassNotFoundException, ParseException {

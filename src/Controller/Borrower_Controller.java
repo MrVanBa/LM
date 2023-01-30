@@ -9,10 +9,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import Model.Borrower;
 
-/**
- *
- * @author tungts
- */
 public class Borrower_Controller {
     
     Borrower borrower = new Borrower();
