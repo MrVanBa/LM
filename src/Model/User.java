@@ -5,7 +5,7 @@
  */
 package Model;
 
-import View.common.LoginForm;
+import View.LoginForm;
 import java.sql.*;
 import java.util.logging.*;
 
