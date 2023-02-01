@@ -5,26 +5,26 @@ import java.util.*;
 
 public class Author extends DataAccessHelper {
 
-    private int author_ID;
+    private String author_ID;
     private String author_Name;
 
-    private final String GET_LIST_AUTHOR = "SELECT * FROM tkxdpm.tacgia";
-    private final String GET_MAX_ID = "SELECT Max(maTacGia) FROM tkxdpm.tacgia";
-    private final String ADD_AUTHOR = "INSERT INTO tkxdpm.tacgia VALUES (?,?)";
+    private final String GET_LIST_AUTHOR = "SELECT * FROM QuanLyThuVien_3.TacGia";
+    private final String GET_MAX_ID = "SELECT Max(MaTacGia) FROM QuanLyThuVien_3.TacGia";
+    private final String ADD_AUTHOR = "INSERT INTO QuanLyThuVien_3.TacGia VALUES (?,?)";
 
     public Author() {
     }
 
-    public Author(int author_ID, String author_Name) {
+    public Author(String author_ID, String author_Name) {
         this.author_ID = author_ID;
         this.author_Name = author_Name;
     }
 
-    public int getauthor_ID() {
+    public String getauthor_ID() {
         return author_ID;
     }
 
-    public void setauthor_ID(int author_ID) {
+    public void setauthor_ID(String author_ID) {
         this.author_ID = author_ID;
     }
 
@@ -44,14 +44,14 @@ public class Author extends DataAccessHelper {
      * @throws ClassNotFoundException
      * @throws SQLException
      */
-    public String getNameAuthorByIdAuthor(int idAuthor) throws ClassNotFoundException, SQLException {
+    public String getNameAuthorByIdAuthor(String idAuthor) throws ClassNotFoundException, SQLException {
         String nameAuthor = "";
         connectDatabase();
-        PreparedStatement st = conn.prepareStatement("SELECT * FROM tkxdpm.tacgia where maTacGia =?");
-        st.setInt(1, idAuthor);
+        PreparedStatement st = conn.prepareStatement("SELECT * FROM QuanLyThuVien_3.TacGia where MaTacGia =?");
+        st.setString(1, idAuthor);
         ResultSet rs = st.executeQuery();
         while (rs.next()) {
-            nameAuthor = rs.getString("tenTacGia");
+            nameAuthor = rs.getString("TenTacGia");
         }
         closeDatabase();
         return nameAuthor;
@@ -70,8 +70,8 @@ public class Author extends DataAccessHelper {
         PreparedStatement ps = conn.prepareStatement(GET_LIST_AUTHOR);
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
-            int idAuthor = rs.getInt("maTacGia");
-            String nameAuthor = rs.getString("tenTacGia");
+            String idAuthor = rs.getString("MaTacGia");
+            String nameAuthor = rs.getString("TenTacGia");
             authors.add(new Author(idAuthor, nameAuthor));
         }
         closeDatabase();
@@ -85,13 +85,13 @@ public class Author extends DataAccessHelper {
      * @throws ClassNotFoundException
      * @throws SQLException
      */
-    public int getMaxIdAuthor() throws ClassNotFoundException, SQLException {
-        int maxId = 0;
+    public String getMaxIdAuthor() throws ClassNotFoundException, SQLException {
+        String maxId = null;
         connectDatabase();
         PreparedStatement ps = conn.prepareStatement(GET_MAX_ID);
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
-            maxId = rs.getInt(1);
+            maxId = rs.getString(1);
         }
         closeDatabase();
         return maxId;
@@ -106,7 +106,7 @@ public class Author extends DataAccessHelper {
     public void addAuthor() throws ClassNotFoundException, SQLException {
         connectDatabase();
         PreparedStatement ps = conn.prepareStatement(ADD_AUTHOR);
-        ps.setInt(1, author_ID);
+        ps.setString(1, author_ID);
         ps.setString(2, author_Name);
         ps.executeUpdate();
         closeDatabase();

@@ -112,7 +112,7 @@ public class User extends DataAccessHelper {
     public boolean checkLogin(String username, String password) throws SQLException, ClassNotFoundException {
         String mk = null;
         connectDatabase();
-        PreparedStatement st = conn.prepareStatement("SELECT matKhau FROM tkxdpm.taikhoan where tenTaiKhoan =?");
+        PreparedStatement st = conn.prepareStatement("SELECT matKhau FROM QuanLyThuVien_3.taikhoan where MaTK =?");
         st.setString(1, username);
         ResultSet rs = st.executeQuery();
         while (rs.next()) {
@@ -140,7 +140,7 @@ public class User extends DataAccessHelper {
     public String updateInfoUser(String ten, String sdt, String gtinh, String nhhan, String email, String maNguoiMuon) throws ClassNotFoundException, SQLException {
         try {
             connectDatabase();
-            String sqlQuery = "update taikhoan,nguoimuon,themuon Set taikhoan.ten=?,taikhoan.soDienThoai=?,taikhoan.gioiTinh=?,themuon.ngayHetHan=?,taikhoan.email=? where taikhoan.tenTaiKhoan= nguoimuon.tenTaiKhoan and nguoimuon.maNguoiMuon= themuon.maNguoiMuon and nguoimuon.maNguoiMuon=?";
+            String sqlQuery = "update taikhoan,nguoimuon,themuon Set taikhoan.HoTen=?,taikhoan.SDT=?,taikhoan.gioiTinh=?,themuon.ngayHetHan=?,taikhoan.email=? where taikhoan.MaTK= nguoimuon.MaTK and nguoimuon.maNguoiMuon= themuon.maNguoiMuon and nguoimuon.maNguoiMuon=?";
             PreparedStatement prepareStatement;
             prepareStatement = conn.prepareStatement(sqlQuery);
             prepareStatement.setString(1, ten);
@@ -165,9 +165,9 @@ public class User extends DataAccessHelper {
         User userSearch;
         Borrower borrowerSearch;
         BorrowingCard borrowCardSearch;
-        String sqlQuery = "select taikhoan.tenTaiKhoan,taikhoan.matKhau,taikhoan.ten,taikhoan.gioiTinh,taikhoan.email,taikhoan.soDienThoai,\n"
-                + "nguoimuon.maNguoiMuon,nguoimuon.mssv,nguoimuon.soTienDatCoc,nguoimuon.giaiDoanHoc,themuon.ngayHetHan\n"
-                + "from taikhoan ,nguoimuon ,themuon where taikhoan.tenTaiKhoan=nguoimuon.tenTaiKhoan and nguoimuon.maNguoiMuon= \"" + x + "\" and nguoimuon.maNguoiMuon = themuon.maNguoiMuon\n";
+        String sqlQuery = "select taikhoan.MaTK,taikhoan.matKhau,taikhoan.HoTen,taikhoan.gioiTinh,taikhoan.email,taikhoan.SDT,\n"
+                + "nguoimuon.maNguoiMuon,nguoimuon.mssv,nguoimuon.TienCoc,nguoimuon.giaiDoanHoc,themuon.ngayHetHan\n"
+                + "from taikhoan ,nguoimuon ,themuon where taikhoan.MaTK=nguoimuon.MaTK and nguoimuon.maNguoiMuon= \"" + x + "\" and nguoimuon.maNguoiMuon = themuon.maNguoiMuon\n";
         ResultSet rs = null;
         Statement statement;
         try {
@@ -175,7 +175,7 @@ public class User extends DataAccessHelper {
             rs = statement.executeQuery(sqlQuery);
             rs.next();
             userSearch = new User(rs.getString(3), rs.getString(1), rs.getString(2), rs.getString(5), rs.getString(4).equalsIgnoreCase("Nam") ? true : false, rs.getString(6));
-            borrowerSearch = new Borrower(rs.getString(7), rs.getString(8), rs.getInt(9), rs.getString(10), rs.getString(1));
+            borrowerSearch = new Borrower(rs.getString(7), rs.getString(8), rs.getFloat(9), rs.getString(10), rs.getString(1));
             borrowCardSearch = new BorrowingCard();
             borrowCardSearch.setborrowingcard_Expried_Date(rs.getString(11));
             account[0] = userSearch;

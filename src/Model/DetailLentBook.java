@@ -5,16 +5,16 @@ import java.util.*;
 
 public class DetailLentBook extends DataAccessHelper {
 
-    private String      detail_lent_book_ID;
+    private String         detail_lent_book_ID;
     private int         detail_lent_book_Status;  // 0: da dki ; 1: Dang muon ; 2 : da tra 
     private String      detail_lent_book_LentDate; // ngay muon
     private String      detail_lent_book_ReturnDate; // ngay tra
     private int         detail_lent_book_Fine; //tien phat
     private String      detail_lent_book_Reason; //lý do phạt
 
-    private final String GET_DETAIL_LENT_BOOK = "SELECT * FROM tkxdpm.chitietmuonsach where maThongTinMuonSach=?";
-    private final String DELETE_COPYOFBOOK_OF_DETAIL_BORROWER = "DELETE FROM chitietmuonsach WHERE maThongTinMuonSach = ? and maBanSaoSach=?";
-    private final String UPDATE_DETAIL_LENT_BOOK = "UPDATE chitietmuonsach SET trangThai='1',ngayMuon=? WHERE maThongTinMuonSach=? and maBanSaoSach=? ";
+    private final String GET_DETAIL_LENT_BOOK = "SELECT * FROM QuanLyThuVien_3.chitietmuonsach where MaTTMuonTra=?";
+    private final String DELETE_COPYOFBOOK_OF_DETAIL_BORROWER = "DELETE FROM chitietmuonsach WHERE MaTTMuonTra = ? and MaSachCP=?";
+    private final String UPDATE_DETAIL_LENT_BOOK = "UPDATE chitietmuonsach SET trangThai='1',ngayMuon=? WHERE MaTTMuonTra=? and MaSachCP=? ";
 
     public DetailLentBook() {
     }
@@ -92,7 +92,7 @@ public class DetailLentBook extends DataAccessHelper {
         ps.setString(1, idBorrowerInformation);
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
-            String book_ID = rs.getString("maBanSaoSach");
+            String book_ID = rs.getString("MaSachCP");
             int status = rs.getInt("trangThai");
             String lentDate = rs.getString("ngayMuon");
             String returnDate = rs.getString("ngayTra");
@@ -126,7 +126,7 @@ public class DetailLentBook extends DataAccessHelper {
 
     public void addInfomationDetail(Book book, int numberOfCopy, String maThongTinMuonTra) throws SQLException, ClassNotFoundException {
         connectDatabase();
-        String sqlCommand = "INSERT INTO chitietmuonsach (maThongTinMuonSach, maBanSaoSach,trangThai) VALUES (?, ?, 0)";
+        String sqlCommand = "INSERT INTO chitietmuonsach (MaTTMuonTra, MaSachCP,trangThai) VALUES (?, ?, 0)";
         PreparedStatement st = conn.prepareStatement(sqlCommand);
         st.setString(1, maThongTinMuonTra);
         st.setString(2, new CopyOfBook().getListCopyOfBookByIdBook(book.getbook_ID()).get(numberOfCopy - 1).getcopy_of_book_ID());
@@ -145,14 +145,14 @@ public class DetailLentBook extends DataAccessHelper {
     public int getNumberBook(String idBorrowingInfo) throws ClassNotFoundException, SQLException {
         connectDatabase();
         int numberBook = 0;
-        String sqlCommand = "select count(maThongTinMuonSach) from chitietmuonsach where maThongTinMuonSach =?";
+        String sqlCommand = "select count(MaTTMuonTra) from chitietmuonsach where MaTTMuonTra =?";
         PreparedStatement st = conn.prepareStatement(sqlCommand);
         st.setString(1, idBorrowingInfo);
         ResultSet rs = st.executeQuery();
 
         while (rs.next()) {
 
-            numberBook = rs.getInt("count(maThongTinMuonSach)");
+            numberBook = rs.getInt("count(MaTTMuonTra)");
         }
 
         closeDatabase();

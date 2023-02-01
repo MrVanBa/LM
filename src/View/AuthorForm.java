@@ -290,7 +290,7 @@ public class AuthorForm extends javax.swing.JFrame {
     private void addAuthor(){
         ArrayList<Author> arr = new ArrayList<>();
         for (int row = 0;row <tableAuthor.getRowCount();row++){
-            int idAuthor = (tableAuthor.getValueAt(row,0)=="")?-1:(int)tableAuthor.getValueAt(row, 0);
+            String idAuthor = (tableAuthor.getValueAt(row,0)=="")?null:(String)tableAuthor.getValueAt(row, 0);
             String nameAuthor =(String)tableAuthor.getValueAt(row, 1);
             arr.add(new Author(idAuthor, nameAuthor));
         }

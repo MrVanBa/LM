@@ -14,25 +14,21 @@ import java.util.Date;
 public class CopyOfBook extends DataAccessHelper {
 
     private String          copy_of_book_ID;
-    private int             copy_of_book_Num_Of_Copy;
-    private int             copy_of_book_Price;
-    private TypeOfCopy      copy_of_book_Type;
+    private String             copy_of_book_Num_Of_Copy;
     private StatusOfCopy    copy_of_book_Status;
 
-    public final String GET_BOOK_BY_ID_COPY_OF_BOOK = "SELECT * FROM tkxdpm.bansaosach,sach where  maBanSao=? and bansaosach.maSach = sach.maSach";
-    public final String GET_LIST_COPY_OF_BOOK_BY_ID_BOOK = "SELECT * FROM tkxdpm.bansaosach where maSach =?";
-    public final String ADD_COPY_OF_BOOK_BY_ID_BOOK = "INSERT INTO bansaosach VALUES (?,?,?,?,?,?,?)";
-    public final String GET_COPY_OF_BOOK_BY_ID = "SELECT * FROM tkxdpm.bansaosach where maBanSao =?";
-    public final String UPDATE_COPY_OF_BOOK = "UPDATE bansaosach SET trangThai=?,gia=? WHERE maBanSao=?";
+    public final String GET_BOOK_BY_ID_COPY_OF_BOOK = "SELECT * FROM QuanLyThuVien_3.bansaosach,sach where  MaSachCP=? and bansaosach.MaSach = sach.maSach";
+    public final String GET_LIST_COPY_OF_BOOK_BY_ID_BOOK = "SELECT * FROM QuanLyThuVien_3.bansaosach where maSach =?";
+    public final String ADD_COPY_OF_BOOK_BY_ID_BOOK = "INSERT INTO bansaosach VALUES (?,?,?,?)";
+    public final String GET_COPY_OF_BOOK_BY_ID = "SELECT * FROM QuanLyThuVien_3.bansaosach where MaSachCP =?";
+    public final String UPDATE_COPY_OF_BOOK = "UPDATE bansaosach SET trangThai=? WHERE maBanSao=?";
 
     public CopyOfBook() {
     }
 
-    public CopyOfBook(String copy_of_book_ID, int copy_of_book_Num_Of_Copy, int copy_of_book_Price, TypeOfCopy copy_of_book_Type, StatusOfCopy copy_of_book_Status) {
+    public CopyOfBook(String copy_of_book_ID, String copy_of_book_Num_Of_Copy, StatusOfCopy copy_of_book_Status) {
         this.copy_of_book_ID = copy_of_book_ID;
         this.copy_of_book_Num_Of_Copy = copy_of_book_Num_Of_Copy;
-        this.copy_of_book_Price = copy_of_book_Price;
-        this.copy_of_book_Type = copy_of_book_Type;
         this.copy_of_book_Status = copy_of_book_Status;
     }
 
@@ -44,28 +40,12 @@ public class CopyOfBook extends DataAccessHelper {
         this.copy_of_book_ID = copy_of_book_ID;
     }
 
-    public int getcopy_of_book_Num_Of_Copy() {
+    public String getcopy_of_book_Num_Of_Copy() {
         return copy_of_book_Num_Of_Copy;
     }
 
-    public void setcopy_of_book_Num_Of_Copy(int copy_of_book_Num_Of_Copy) {
+    public void setcopy_of_book_Num_Of_Copy(String copy_of_book_Num_Of_Copy) {
         this.copy_of_book_Num_Of_Copy = copy_of_book_Num_Of_Copy;
-    }
-
-    public int getcopy_of_book_Price() {
-        return copy_of_book_Price;
-    }
-
-    public void setcopy_of_book_Price(int copy_of_book_Price) {
-        this.copy_of_book_Price = copy_of_book_Price;
-    }
-
-    public TypeOfCopy getcopy_of_book_Type() {
-        return copy_of_book_Type;
-    }
-
-    public void setcopy_of_book_Type(TypeOfCopy copy_of_book_Type) {
-        this.copy_of_book_Type = copy_of_book_Type;
     }
 
     public StatusOfCopy getcopy_of_book_Status() {
@@ -85,17 +65,6 @@ public class CopyOfBook extends DataAccessHelper {
 
         private StatusOfCopy(int status_of_copy_value) {
             this.status_of_copy_value = status_of_copy_value;
-        }
-    }
-
-    public static enum TypeOfCopy {
-        REFERENCE(0),
-        BORROWABLE(1);
-
-        private int type_of_copy_value;
-
-        private TypeOfCopy(int type_of_copy_value) {
-            this.type_of_copy_value = type_of_copy_value;
         }
     }
 
@@ -133,9 +102,8 @@ public class CopyOfBook extends DataAccessHelper {
         st.setString(1, idBook);
         ResultSet rs = st.executeQuery();
         while (rs.next()) {
-            String idCopyOfBook = rs.getString("maBanSao");
-            int numberOfCopy = rs.getInt("soThuTu");
-            int price = rs.getInt("gia");
+            String idCopyOfBook = rs.getString("MaSachCP");
+            String numberOfCopy = rs.getString("ViTri");
 
             //trang thai ban sao
             StatusOfCopy statusOfCopy = null;
@@ -147,14 +115,7 @@ public class CopyOfBook extends DataAccessHelper {
                 statusOfCopy = StatusOfCopy.BORROWED;
             }
 
-            //loai ban sao
-            TypeOfCopy typeOfCopy = null;
-            if (rs.getInt("loaiBanSao") == 0) {
-                typeOfCopy = TypeOfCopy.REFERENCE;
-            } else if (rs.getInt("loaiBanSao") == 1) {
-                typeOfCopy = TypeOfCopy.BORROWABLE;
-            }
-            listCopyOfBooks.add(new CopyOfBook(idCopyOfBook, numberOfCopy, price, typeOfCopy, statusOfCopy));
+            listCopyOfBooks.add(new CopyOfBook(idCopyOfBook, numberOfCopy, statusOfCopy));
         }
         closeDatabase();
         return listCopyOfBooks;
@@ -172,13 +133,9 @@ public class CopyOfBook extends DataAccessHelper {
     public boolean addCopyOfBookByIdBook(String idBook) throws ClassNotFoundException, SQLException {
         connectDatabase();
         PreparedStatement ps = conn.prepareStatement(ADD_COPY_OF_BOOK_BY_ID_BOOK);
-        ps.setString(1, idBook);
-        ps.setString(2, copy_of_book_ID);
-        ps.setInt(3, copy_of_book_Num_Of_Copy);
-        ps.setInt(4, copy_of_book_Type == TypeOfCopy.REFERENCE ? 0 : 1);
-        ps.setInt(5, copy_of_book_Price);
-        ps.setInt(6, 0);    //status : available
-        ps.setInt(7, 0);    //delete : 0
+        ps.setString(1, copy_of_book_ID);
+        ps.setString(2, copy_of_book_Num_Of_Copy);
+        ps.setString(4, idBook);
         int isuccess = ps.executeUpdate();
         closeDatabase();
         return (isuccess == -1) ? false : true;
@@ -199,12 +156,8 @@ public class CopyOfBook extends DataAccessHelper {
         st.setString(1, idCopyOfBook);
         ResultSet rs = st.executeQuery();
         while (rs.next()) {
-            if (rs.getInt("xoa") != 0) {
-                return null;
-            }
 
-            int numberOfCopy = rs.getInt("soThuTu");
-            int price = rs.getInt("gia");
+            String numberOfCopy = rs.getString("ViTri");
 
             //trang thai ban sao
             StatusOfCopy statusOfCopy = null;
@@ -216,15 +169,7 @@ public class CopyOfBook extends DataAccessHelper {
                 statusOfCopy = StatusOfCopy.BORROWED;
             }
 
-            //loai ban sao
-            TypeOfCopy typeOfCopy = null;
-            if (rs.getInt("loaiBanSao") == 0) {
-                typeOfCopy = TypeOfCopy.REFERENCE;
-            } else if (rs.getInt("loaiBanSao") == 1) {
-                typeOfCopy = TypeOfCopy.BORROWABLE;
-            }
-
-            b = new CopyOfBook(idCopyOfBook, numberOfCopy, price, typeOfCopy, statusOfCopy);
+            b = new CopyOfBook(idCopyOfBook, numberOfCopy, statusOfCopy);
         }
         closeDatabase();
         return b;
@@ -249,8 +194,7 @@ public class CopyOfBook extends DataAccessHelper {
         } else if (copy_of_book_Status == StatusOfCopy.BORROWED) {
             ps.setInt(1, 2);
         }
-        ps.setInt(2, copy_of_book_Price);
-        ps.setString(3, copy_of_book_ID);
+        ps.setString(1, copy_of_book_ID);
         int isSuccess = ps.executeUpdate();
         closeDatabase();
         return (isSuccess == -1) ? false : true;
@@ -264,9 +208,9 @@ public class CopyOfBook extends DataAccessHelper {
      * @see ClassNotFoundException
      * @see SQLException
      */
-    public StatusOfCopy getStatusByIdBook(String idBook, Integer soThuTu) throws ClassNotFoundException, SQLException {
+    public StatusOfCopy getStatusByIdBook(String idBook, String soThuTu) throws ClassNotFoundException, SQLException {
         connectDatabase();
-        String command = "SELECT bansaosach.trangThai FROM tkxdpm.bansaosach where maSach =\"" + idBook + "\" and soThuTu =" + soThuTu;
+        String command = "SELECT bansaosach.trangThai FROM QuanLyThuVien_3.bansaosach where maSach =\"" + idBook + "\" and ViTri =" + soThuTu;
         //   System.out.println(command);
         PreparedStatement st = conn.prepareStatement(command);
         ResultSet rs = st.executeQuery();
@@ -307,13 +251,13 @@ public class CopyOfBook extends DataAccessHelper {
         User taikhoan = new User();
         Borrower nguoimuon = new Borrower();
         PreparedStatement preparedStatement;
-        String sql = "SELECT taikhoan.tenTaiKhoan,taiKhoan.ten,taikhoan.soDienThoai,nguoimuon.maNguoiMuon,thongtinmuontrasach.maThongTinMuonTraSach, chitietmuonsach.ngayMuon,thongtinmuontrasach.hanTra,bansaosach.maBanSao,bansaosach.trangThai,sach.maSach,sach.tenSach\n"
+        String sql = "SELECT taikhoan.MaTK,taiKhoan.HoTen,taikhoan.SDT,nguoimuon.maNguoiMuon,thongtinmuontrasach.maTTMuonTra, chitietmuonsach.ngayMuon,thongtinmuontrasach.hanTra,bansaosach.MaSachCP,bansaosach.trangThai,sach.maSach,sach.tenSach\n"
                 + "                from taikhoan,nguoimuon,thongtinmuontrasach,bansaosach,sach,chitietmuonsach\n"
-                + "                where taikhoan.tenTaiKhoan= nguoimuon.tenTaiKhoan \n"
+                + "                where taikhoan.MaTK= nguoimuon.MaTK \n"
                 + "                and nguoimuon.maNguoiMuon=?\n"
                 + "                and thongtinmuontrasach.maNguoiMuon= nguoimuon.maNguoiMuon \n"
-                + "                and thongtinmuontrasach.maThongTinMuonTraSach= chitietmuonsach.maThongTinMuonSach \n"
-                + "                and chitietmuonsach.maBanSaoSach= bansaosach.maBanSao \n"
+                + "                and thongtinmuontrasach.maTTMuonTra= chitietmuonsach.maTTMuonTra \n"
+                + "                and chitietmuonsach.MaSachCP= bansaosach.MaSachCP \n"
                 + "                and bansaosach.maSach= sach.maSach \n"
                 + "                and chitietmuonsach.trangThai=\"1\"";
         preparedStatement = conn.prepareStatement(sql);
@@ -322,7 +266,7 @@ public class CopyOfBook extends DataAccessHelper {
         rs = preparedStatement.executeQuery();
         try {
             rs.next();
-            System.out.println("tenTenKhoan:" + rs.getString(1) + "  ten :" + rs.getString(2) + "  phone:" + rs.getString(3) + "   maNguoiMuon:" + rs.getString(4));
+            System.out.println("MaTK:" + rs.getString(1) + "  HoTen :" + rs.getString(2) + "  SDT:" + rs.getString(3) + "   maNguoiMuon:" + rs.getString(4));
             taikhoan.setuser_Username(rs.getString(1));
             taikhoan.setuser_Name(rs.getString(2));
             taikhoan.setuser_Phone(rs.getString(3));
@@ -378,10 +322,10 @@ public class CopyOfBook extends DataAccessHelper {
                 connectDatabase();
                 PreparedStatement preparedStatement;
                 String sql = "UPDATE bansaosach,chitietmuonsach,thongtinmuontrasach SET bansaosach.trangThai=\"0\",chitietmuonsach.trangThai= \"2\",chitietmuonsach.ngayTra=?,chitietmuonsach.tienPhat=?,chitietmuonsach.lyDoPhat=? \n"
-                        + "WHERE bansaosach.maBanSao= ? \n"
-                        + "and bansaosach.maBanSao= chitietmuonsach.maBanSaoSach \n"
-                        + "and chitietmuonsach.maThongTinMuonSach= thongtinmuontrasach.maThongTinMuonTraSach \n"
-                        + "and thongtinmuontrasach.maThongTinMuonTraSach=?";
+                        + "WHERE bansaosach.MaSachCP= ? \n"
+                        + "and bansaosach.MaSachCP= chitietmuonsach.MaSachCP \n"
+                        + "and chitietmuonsach.maTTMuonTra= thongtinmuontrasach.maTTMuonTra \n"
+                        + "and thongtinmuontrasach.maTTMuonTra=?";
                 preparedStatement = conn.prepareStatement(sql);
 
                 preparedStatement.setString(1, a);
@@ -405,7 +349,7 @@ public class CopyOfBook extends DataAccessHelper {
      */
     public void updateStateofBook(String idCopyBook) throws ClassNotFoundException, SQLException {
         connectDatabase();
-        String sqlCommand = "UPDATE bansaosach SET trangThai=0 WHERE maBanSao=?";
+        String sqlCommand = "UPDATE bansaosach SET trangThai=0 WHERE MaSachCP=?";
         PreparedStatement st = conn.prepareStatement(sqlCommand);
         st.setString(1, idCopyBook);
         st.execute();
@@ -417,10 +361,10 @@ public class CopyOfBook extends DataAccessHelper {
         for (int i = 0; i < IdBorrower.size(); i++) {
             result=1;
             connectDatabase();
-            String sql = "select count(chitietmuonsach.maThongTinMuonSach) \n"
+            String sql = "select count(chitietmuonsach.maTTMuonTra) \n"
                     + "from thongtinmuontrasach,chitietmuonsach\n"
-                    + "where thongtinmuontrasach.maThongTinMuonTraSach=? \n"
-                    + "and thongtinmuontrasach.maThongTinMuonTraSach = chitietmuonsach.maThongTinMuonSach\n"
+                    + "where thongtinmuontrasach.maTTMuonTra=? \n"
+                    + "and thongtinmuontrasach.maTTMuonTra = chitietmuonsach.maTTMuonTra\n"
                     + "and chitietmuonsach.trangThai=\"1\" ";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, IdBorrower.get(i));
@@ -432,7 +376,7 @@ public class CopyOfBook extends DataAccessHelper {
 
             if (result == 0) {
                 connectDatabase();
-                sql = "UPDATE thongtinmuontrasach SET trangThai='2' WHERE maThongTinMuonTraSach = ? ;";
+                sql = "UPDATE thongtinmuontrasach SET trangThai='2' WHERE maTTMuonTra = ? ;";
                 PreparedStatement ps1 = conn.prepareStatement(sql);
                 ps1.setString(1, IdBorrower.get(i));
                 ps1.executeUpdate();

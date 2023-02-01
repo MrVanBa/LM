@@ -382,8 +382,8 @@ public class AddNewBookForm extends javax.swing.JPanel {
         boolean isReference = (cbTypeOfCoppy.getSelectedIndex() == 0) ? false : true;
         for (int i = 0; i < numberOfCoppy; i++) {
             model.addRow(new Object[]{
-                BookHelper.getNewIdCoppyOfBook(book, i + 1),
-                BookHelper.getNewNumberCoppyOfBook(book, i + 1),
+                BookHelper.getNewIdCoppyOfBook(book, Integer.toString(i+1)),
+                BookHelper.getNewNumberCoppyOfBook(book, Integer.toString(i+1)),
                 tfPrice.getText().trim(),
                 isReference,
                 !isReference
@@ -453,17 +453,16 @@ public class AddNewBookForm extends javax.swing.JPanel {
         //add Author if author == null
         for (int i = 0; i < arrListAuthor.size(); i++) {
             Author author = arrListAuthor.get(i);
-            if (author.getauthor_ID() == -1) {
+            if (author.getauthor_ID() == null) {
                 author.setauthor_ID(Author_Controller.getInstance().getMaxIdAuthor() + 1);
                 Author_Controller.getInstance().addAuthor(author);
             }
         }
 
         String titleBook = tfNameBook.getText().toString().trim();
-        String isbn = tfISBN.getText().toString().trim();
+
         Book book = new Book();
         book.setbook_ID(idBook);
-        book.setbook_ISBN(isbn);
         book.setbook_Title(titleBook);
         book.setbook_Publisher(publisher);
         
@@ -471,10 +470,8 @@ public class AddNewBookForm extends javax.swing.JPanel {
         ArrayList<CopyOfBook> copyOfBooks = new ArrayList<>();
         for (int i = 0; i < tableAddCoppyOfNewBook.getRowCount(); i++) {
             String idCopyOfBook = (String) tableAddCoppyOfNewBook.getValueAt(i, 0);
-            int numberOfCopy = (int)tableAddCoppyOfNewBook.getValueAt(i, 1);
-            int price = Integer.parseInt(tableAddCoppyOfNewBook.getValueAt(i, 2).toString());
-            CopyOfBook.TypeOfCopy typeOfCopy = ((boolean)tableAddCoppyOfNewBook.getValueAt(i, 3)) ? CopyOfBook.TypeOfCopy.REFERENCE : CopyOfBook.TypeOfCopy.BORROWABLE;
-            copyOfBooks.add(new CopyOfBook(idCopyOfBook, numberOfCopy, price, typeOfCopy, CopyOfBook.StatusOfCopy.AVAILABLE));
+            String numberOfCopy = (String) tableAddCoppyOfNewBook.getValueAt(i, 1);
+            copyOfBooks.add(new CopyOfBook(idCopyOfBook, numberOfCopy, CopyOfBook.StatusOfCopy.AVAILABLE));
         }
         book.setbook_ListofCopy(copyOfBooks);
         book.setbook_ListofAuthor(arrListAuthor);

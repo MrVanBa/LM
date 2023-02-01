@@ -24,17 +24,17 @@ public class BorrowingInfo extends DataAccessHelper {
     private String          borrowing_info_Borrowed_Date;
     private int             borrowing_info_Num_of_Book;
     private String          borrowing_info_Expect_Return_Date;
-    private int             borrowing_info_Deposit;
+    private float             borrowing_info_Deposit;
     private BorrowStatus    borrowing_info_Status;
 
-    private final String GET_LIST_BORROWINGINFORMATION_BY_BORROWER = "SELECT * FROM tkxdpm.thongtinmuontrasach where maNguoiMuon = ?";
-    private final String DELETE_BORROWING_INFOR_BY_ID = "DELETE FROM thongtinmuontrasach WHERE maThongTinMuonTraSach=?";
-    private final String UPDATE_LENT_BOOK = "UPDATE thongtinmuontrasach SET hanTra=?, trangThai=?, tienDatCoc=? WHERE maThongTinMuonTraSach=?";
+    private final String GET_LIST_BORROWINGINFORMATION_BY_BORROWER = "SELECT * FROM QuanLyThuVien_3.thongtinmuontrasach where maNguoiMuon = ?";
+    private final String DELETE_BORROWING_INFOR_BY_ID = "DELETE FROM thongtinmuontrasach WHERE MaTTMuonTra=?";
+    private final String UPDATE_LENT_BOOK = "UPDATE thongtinmuontrasach SET hanTra=?, trangThai=?, TienCoc=? WHERE MaTTMuonTra=?";
 
     public BorrowingInfo() {
     }
 
-    public BorrowingInfo(String borrowing_info_ID, Borrower borrowing_info_Borrower, String borrowing_info_Borrowed_Date, String borrowing_info_Expect_Return_Date, int borrowing_info_Deposit, BorrowStatus borrowing_info_Status) {
+    public BorrowingInfo(String borrowing_info_ID, Borrower borrowing_info_Borrower, String borrowing_info_Borrowed_Date, String borrowing_info_Expect_Return_Date, float borrowing_info_Deposit, BorrowStatus borrowing_info_Status) {
         this.borrowing_info_ID = borrowing_info_ID;
         this.borrowing_info_Borrower = borrowing_info_Borrower;
         this.borrowing_info_Borrowed_Date = borrowing_info_Borrowed_Date;
@@ -83,7 +83,7 @@ public class BorrowingInfo extends DataAccessHelper {
         this.borrowing_info_Expect_Return_Date = borrowing_info_Expect_Return_Date;
     }
 
-    public int getborrowing_info_Deposit() {
+    public float getborrowing_info_Deposit() {
         return borrowing_info_Deposit;
     }
 
@@ -125,10 +125,10 @@ public class BorrowingInfo extends DataAccessHelper {
         ps.setString(1, borrower.getborrower_ID());
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
-            String idBorrowingInformation = rs.getString("maThongTinMuonTraSach");
+            String idBorrowingInformation = rs.getString("MaTTMuonTra");
             String borrowedDate = rs.getString("ngayDangKi");
             String expectReturnDate = rs.getString("hanTra");
-            int deposit = rs.getInt("tienDatCoc");
+            int deposit = rs.getInt("TienCoc");
 
             BorrowStatus borrowStatus = null;
             if (rs.getInt("trangThai") == 0) {
@@ -171,7 +171,7 @@ public class BorrowingInfo extends DataAccessHelper {
         PreparedStatement ps = conn.prepareStatement(UPDATE_LENT_BOOK);
         ps.setString(1, borrowing_info_Expect_Return_Date);
         ps.setInt(2, 1);
-        ps.setInt(3, borrowing_info_Deposit);
+        ps.setFloat(3, borrowing_info_Deposit);
         ps.setString(4, borrowing_info_ID);
         int i = ps.executeUpdate();
         closeDatabase();
@@ -192,8 +192,8 @@ public class BorrowingInfo extends DataAccessHelper {
     public ArrayList<BorrowingInfo> getBorrowingInfo(String borrowerId) throws ClassNotFoundException, SQLException {
         ArrayList<BorrowingInfo> info = new ArrayList<>();
         connectDatabase();
-        PreparedStatement st = conn.prepareStatement("SELECT  chitietmuonsach.ngayMuon, chitietmuonsach.ngayTra, bansaosach.maSach, sach.tenSach, tacgia.tenTacGia, nhaphathanh.tenNhaPhatHanh, bansaosach.soThuTu, thongtinmuontrasach.ngayDangKi, thongtinmuontrasach.hanTra, bansaosach.trangThai "
-                + "FROM tkxdpm.thongtinmuontrasach,tkxdpm.bansaosach,tkxdpm.chitietmuonsach, tkxdpm.sach, tkxdpm.tacgia,tkxdpm.chitiettacgia,tkxdpm.nhaphathanh "
+        PreparedStatement st = conn.prepareStatement("SELECT  chitietmuonsach.ngayMuon, chitietmuonsach.ngayTra, bansaosach.maSach, sach.tenSach, tacgia.tenTacGia, nhaphathanh.TenNPH, thongtinmuontrasach.ngayDangKi, thongtinmuontrasach.hanTra, bansaosach.trangThai "
+                + "FROM QuanLyThuVien_3.thongtinmuontrasach,QuanLyThuVien_3.bansaosach,QuanLyThuVien_3.chitietmuonsach, QuanLyThuVien_3.sach, QuanLyThuVien_3.tacgia,QuanLyThuVien_3.chitiettacgia,QuanLyThuVien_3.nhaphathanh "
                 + "where thongtinmuontrasach.manguoimuon = ? and thongtinmuontrasach.maThongTinMuonTraSach = chitietmuonsach.maThongTinMuonSach and chitietmuonsach.maBanSaoSach = bansaosach.maBanSao and bansaosach.maSach = sach.maSach and sach.maSach = chitiettacgia.maSach "
                 + "and tacgia.maTacGia = chitiettacgia.maTacGia and sach.maNhaPhatHanh = nhaphathanh.maNhaPhatHanh and thongtinmuontrasach.trangThai = 0  group by sach.maSach");
 
@@ -223,8 +223,8 @@ public class BorrowingInfo extends DataAccessHelper {
         Vector<String> listIdBook = new Vector<>();
         PreparedStatement st1 = conn.prepareStatement("select bansaosach.maSach from nguoimuon, bansaosach, chitietmuonsach,thongtinmuontrasach where nguoimuon.maNguoiMuon=\"" + maNguoiMuon + "\"\n"
                 + "and nguoimuon.maNguoiMuon=thongtinmuontrasach.maNguoiMuon\n" + " and thongtinmuontrasach.trangThai = 0 "
-                + "and thongtinmuontrasach.maThongTinMuonTraSach= chitietmuonsach.maThongTinMuonSach\n"
-                + " and chitietmuonsach.maBanSaoSach = bansaosach.maBanSao group by bansaosach.maSach");
+                + "and thongtinmuontrasach.maTTMuonTra= chitietmuonsach.maTTMuonTra\n"
+                + " and chitietmuonsach.maSachCP = bansaosach.maSachCP group by bansaosach.maSach");
         ResultSet rs1 = st1.executeQuery();
         while (rs1.next()) {
             listIdBook.add(rs1.getString("maSach"));
@@ -241,11 +241,11 @@ public class BorrowingInfo extends DataAccessHelper {
      */
     public int getNumberBook(String maNguoiMuon) throws SQLException, ClassNotFoundException {
         connectDatabase();
-        PreparedStatement st1 = conn.prepareStatement("SELECT count(maThongTinMuonSach) FROM tkxdpm.chitietmuonsach, thongtinmuontrasach where maNguoiMuon = \"" + maNguoiMuon + "\" and thongtinmuontrasach.trangThai =0 and thongtinmuontrasach.maThongTinMuonTraSach = chitietmuonsach.maThongTinMuonSach");
+        PreparedStatement st1 = conn.prepareStatement("SELECT count(MaTTMuonTra) FROM QuanLyThuVien_3.chitietmuonsach, thongtinmuontrasach where maNguoiMuon = \"" + maNguoiMuon + "\" and thongtinmuontrasach.trangThai =0 and thongtinmuontrasach.maTTMuonTra = chitietmuonsach.maTTMuonTra");
         ResultSet rs1 = st1.executeQuery();
         int numberCoppy = 0;
         while (rs1.next()) {
-            numberCoppy = rs1.getInt("count(maThongTinMuonSach)");
+            numberCoppy = rs1.getInt("count(maTTMuonTra)");
         }
         return numberCoppy;
     }
@@ -259,18 +259,18 @@ public class BorrowingInfo extends DataAccessHelper {
     public boolean updateInfomation(Borrower borrower, Book book, int numberCopy) throws ClassNotFoundException, SQLException {
         connectDatabase();
 
-        PreparedStatement st = conn.prepareStatement("Select maBanSao from bansaosach where maSach = \"" + book.getbook_ID() + "\"and soThuTu =" + numberCopy);
+        PreparedStatement st = conn.prepareStatement("Select MaSachCP from bansaosach where maSach = \"" + book.getbook_ID() + "\"and ViTri =" + numberCopy);
         ResultSet rs = st.executeQuery();
         String maBanSao = null;
         while (rs.next()) {
-            maBanSao = rs.getString("maBanSao");
+            maBanSao = rs.getString("MaSachCP");
         }
-        PreparedStatement st1 = conn.prepareStatement("Select maThongTinMuonSach from chitietmuonsach where maBanSaoSach = \"" + maBanSao + "\"and maThongTinMuonSach in (Select maThongTinMuonTraSach from thongtinmuontrasach where maNguoiMuon= \"" + borrower.getborrower_ID() + "\")");
+        PreparedStatement st1 = conn.prepareStatement("Select MaTTMuonTra from chitietmuonsach where MaSachCP = \"" + maBanSao + "\"and maThongTinMuonSach in (Select MaTTMuonTra from thongtinmuontrasach where maNguoiMuon= \"" + borrower.getborrower_ID() + "\")");
         ResultSet rs1 = st1.executeQuery();
         while (rs1.next()) {
-            PreparedStatement st2 = conn.prepareStatement("Delete from chitietmuonsach where maBanSaoSach=\"" + maBanSao + "\"");
+            PreparedStatement st2 = conn.prepareStatement("Delete from chitietmuonsach where MaSachCP=\"" + maBanSao + "\"");
             st2.execute();
-            PreparedStatement st4 = conn.prepareStatement("UPDATE bansaosach SET trangThai='0' WHERE maBanSao=\"" + maBanSao + "\"");
+            PreparedStatement st4 = conn.prepareStatement("UPDATE bansaosach SET trangThai='0' WHERE MaSachCP=\"" + maBanSao + "\"");
             st4.execute();
         }
         return true;
@@ -303,7 +303,7 @@ public class BorrowingInfo extends DataAccessHelper {
     public String addInfomation(Borrower borrower) throws ClassNotFoundException, SQLException {
         connectDatabase();
         Date date = new Date();
-        String sqlCommand2 = "INSERT INTO thongtinmuontrasach (maThongTinMuonTraSach, ngayDangKi, maNguoiMuon,trangThai) VALUES (? , ? ,  ? ,0)";
+        String sqlCommand2 = "INSERT INTO thongtinmuontrasach (MaTTMuonTra, ngayDangKi, maNguoiMuon,trangThai) VALUES (? , ? ,  ? ,0)";
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         PreparedStatement st1 = conn.prepareStatement(sqlCommand2);
         st1.setString(1, "TQB" + String.valueOf(timestamp.getTime()));
@@ -326,12 +326,12 @@ public class BorrowingInfo extends DataAccessHelper {
         connectDatabase();
         String idBorrowingInfo = "";
 
-        String sqlCommand = "select maThongTinMuonTraSach from thongtinmuontrasach where maNguoiMuon = ? and trangThai =0";
+        String sqlCommand = "select MaTTMuonTra from thongtinmuontrasach where maNguoiMuon = ? and trangThai =0";
         PreparedStatement st = conn.prepareStatement(sqlCommand);
         st.setString(1, idBorrower);
         ResultSet rs = st.executeQuery();
         while (rs.next()) {
-            idBorrowingInfo = rs.getString("maThongTinMuonTraSach");
+            idBorrowingInfo = rs.getString("MaTTMuonTra");
         }
         closeDatabase();
         return idBorrowingInfo;
@@ -349,12 +349,12 @@ public class BorrowingInfo extends DataAccessHelper {
     public ArrayList<String> getListIdBorrowed(String idBorrowingInfo) throws ClassNotFoundException, SQLException {
         ArrayList<String> listIdBook = new ArrayList<>();
         connectDatabase();
-        String sqlCommand = "select maBanSaoSach from chitietmuonsach where maThongTinMuonSach =?";
+        String sqlCommand = "select MaSachCP from chitietmuonsach where MaTTMuonTra =?";
         PreparedStatement st = conn.prepareStatement(sqlCommand);
         st.setString(1, idBorrowingInfo);
         ResultSet rs = st.executeQuery();
         while (rs.next()) {
-            listIdBook.add(rs.getString("maBanSaoSach"));
+            listIdBook.add(rs.getString("MaSachCP"));
         }
 
         closeDatabase();
@@ -374,10 +374,10 @@ public class BorrowingInfo extends DataAccessHelper {
         ArrayList<Book> listBookBorrowed = new ArrayList<>();
         connectDatabase();
 
-        String sqlCommand = "select tacgia.tenTacGia, nhaphathanh.maNhaPhatHanh, sach.tenSach from bansaosach, sach, nhaphathanh, tacgia, chitiettacgia\n"
-                + "where bansaosach.maBanSao =? \n"
+        String sqlCommand = "select tacgia.tenTacGia, nhaphathanh.MaNPH, sach.tenSach from bansaosach, sach, nhaphathanh, tacgia, chitiettacgia\n"
+                + "where bansaosach.MaSachCP =? \n"
                 + "and bansaosach.maSach = sach.maSach\n"
-                + "and sach.maNhaPhatHanh = nhaphathanh.maNhaPhatHanh\n"
+                + "and sach.MaNPH = nhaphathanh.MaNPH\n"
                 + "and sach.maSach = chitiettacgia.maSach\n"
                 + "and chitiettacgia.maTacGia = tacgia.maTacGia ";
         PreparedStatement st = conn.prepareStatement(sqlCommand);
@@ -388,7 +388,7 @@ public class BorrowingInfo extends DataAccessHelper {
                 Book book = new Book();
                 book.setbook_Author(rs.getString("tenTacGia"));
                 book.setbook_Title(rs.getString("tenSach"));
-                book.setbook_Publisher(new Publisher().getPublisherByIdPublisher(rs.getInt("maNhaPhatHanh")));
+                book.setbook_Publisher(new Publisher().getPublisherByIdPublisher(rs.getInt("maNPH")));
                 listBookBorrowed.add(book);
             }
         }
@@ -407,7 +407,7 @@ public class BorrowingInfo extends DataAccessHelper {
     public String getRegistrationDate(String idBorrowingInfo) throws ClassNotFoundException, SQLException {
         String date = "";
         connectDatabase();
-        String sqlCommand = " select thongtinmuontrasach.ngayDangKi from thongtinmuontrasach where maThongTinMuonTraSach =?";
+        String sqlCommand = " select thongtinmuontrasach.ngayDangKi from thongtinmuontrasach where MaTTMuonTra =?";
         PreparedStatement st = conn.prepareStatement(sqlCommand);
         st.setString(1, idBorrowingInfo);
         ResultSet rs = st.executeQuery();

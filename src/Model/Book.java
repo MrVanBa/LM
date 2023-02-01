@@ -9,27 +9,27 @@ public class Book extends DataAccessHelper {
     private String book_ID;
     private String book_Title;
     private String book_Author;
+    private float  book_Price;
     private Publisher book_Publisher;
-    private String book_ISBN;
     private ArrayList<CopyOfBook> book_ListofCopy;
     private ArrayList<Author> book_ListofAuthor;
 
-    private final String GET_LIST_IDAUTHOR = "SELECT * FROM tkxdpm.chitiettacgia where maSach=?";
-    private final String GET_LIST_IDBOOK = "SELECT * FROM tkxdpm.sach where maSach = ?";
-    private final String ADD_BOOK = "INSERT INTO tkxdpm.sach VALUES (?,?,?,?)";
-    private final String ADD_DETAIL_AUTHOR = "INSERT INTO tkxdpm.chitiettacgia VALUES (?,?)";
+    private final String GET_LIST_IDAUTHOR = "SELECT * FROM QuanLyThuVien_3.ChiTietTacGia where MaSach=?";
+    private final String GET_LIST_IDBOOK = "SELECT * FROM QuanLyThuVien_3.Sach where MaSach = ?";
+    private final String ADD_BOOK = "INSERT INTO QuanLyThuVien_3.Sach VALUES (?,?,?,?)";
+    private final String ADD_DETAIL_AUTHOR = "INSERT INTO QuanLyThuVien_3.ChiTietTacGia VALUES (?,?)";
     private final String SEARCH_BOOK = "SELECT * from sach where tenSach like ?";
 
     public Book() {
     }
 
-    public Book(String book_ID, String book_Title, String book_Author, String book_ISBN,
+    public Book(String book_ID, String book_Title, String book_Author, float book_Price,
     ArrayList<CopyOfBook> book_ListofCopy, Publisher book_Publisher) {
         this.book_ID = book_ID;
         this.book_Title = book_Title;
         this.book_Author = book_Author;
+        this.book_Price = book_Price;
         this.book_Publisher = book_Publisher;
-        this.book_ISBN = book_ISBN;
         this.book_ListofCopy = book_ListofCopy;
     }
 
@@ -49,6 +49,14 @@ public class Book extends DataAccessHelper {
         this.book_Title = book_Title;
     }
 
+    public float getbook_Price() {
+        return book_Price;
+    }
+
+    public void setbook_Price(float book_Price) {
+        this.book_Price = book_Price;
+    }
+
     public String getbook_Author() {
         return book_Author;
     }
@@ -63,14 +71,6 @@ public class Book extends DataAccessHelper {
 
     public void setbook_Publisher(Publisher book_Publisher) {
         this.book_Publisher = book_Publisher;
-    }
-
-    public String getbook_ISBN() {
-        return book_ISBN;
-    }
-
-    public void setbook_ISBN(String book_ISBN) {
-        this.book_ISBN = book_ISBN;
     }
 
     public ArrayList<CopyOfBook> getbook_ListofCopy() {
@@ -104,7 +104,7 @@ public class Book extends DataAccessHelper {
         st.setString(1, book_ID);
         ResultSet rs = st.executeQuery();
         while (rs.next()) {
-            int maTacGia = rs.getInt("maTacGia");
+            String maTacGia = rs.getString("MaTacGia");
             nameofListAuthor = (nameofListAuthor.isEmpty())
                     ? nameofListAuthor = new Author().getNameAuthorByIdAuthor(maTacGia)
                     : nameofListAuthor + ", " + new Author().getNameAuthorByIdAuthor(maTacGia);
@@ -128,12 +128,12 @@ public class Book extends DataAccessHelper {
         st.setString(1, book_ID);
         ResultSet rs = st.executeQuery();
         while (rs.next()) {
-            String titleBook = rs.getString("tenSach");
-            Publisher publisher = new Publisher().getPublisherByIdPublisher(rs.getInt("maNhaPhatHanh"));
-            String isbn = rs.getString("isbn");
+            String titleBook = rs.getString("TenSach");
+            Publisher publisher = new Publisher().getPublisherByIdPublisher(rs.getInt("MaNhaPhatHanh"));
             String nameAuthor = getNameAuthorByIdBook(book_ID);
+            float priceBook = rs.getFloat("GiaThue");
             ArrayList<CopyOfBook> listBanSao = new CopyOfBook().getListCopyOfBookByIdBook(book_ID);
-            book = new Book(book_ID, titleBook, nameAuthor, isbn, listBanSao, publisher);
+            book = new Book(book_ID, titleBook, nameAuthor, priceBook, listBanSao, publisher);
         }
         closeDatabase();
         return book;
@@ -154,13 +154,12 @@ public class Book extends DataAccessHelper {
         ps.setString(1, book_ID);
         ps.setString(2, book_Title);
         ps.setInt(3, book_Publisher.getpublisher_ID());
-        ps.setString(4, book_ISBN);
         ps.executeUpdate();
 
         for (int i = 0; i < book_ListofAuthor.size(); i++) {
             ps = conn.prepareStatement(ADD_DETAIL_AUTHOR);
             ps.setString(1, book_ID);
-            ps.setInt(2, book_ListofAuthor.get(i).getauthor_ID());
+            ps.setString(2, book_ListofAuthor.get(i).getauthor_ID());
             ps.executeUpdate();
         }
         closeDatabase();
@@ -183,9 +182,9 @@ public class Book extends DataAccessHelper {
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
             Book book = new Book();
-            book.setbook_ID(rs.getString("maSach"));
-            book.setbook_Title(rs.getString("tenSach"));
-            Publisher publisher = new Publisher().getPublisherByIdPublisher(rs.getInt("maNhaPhatHanh"));
+            book.setbook_ID(rs.getString("MaSach"));
+            book.setbook_Title(rs.getString("TenSach"));
+            Publisher publisher = new Publisher().getPublisherByIdPublisher(rs.getInt("MaNhaPhatHanh"));
             book.setbook_Publisher(publisher);
             String nameAuthor = getNameAuthorByIdBook(book.getbook_ID());
             book.setbook_Author(nameAuthor);
@@ -211,20 +210,21 @@ public class Book extends DataAccessHelper {
         ArrayList<Book> books = new ArrayList<>();
         connectDatabase();
         PreparedStatement st = conn.prepareStatement(
-                "SELECT sach.tenSach, sach.maSach, nhaphathanh.maNhaPhatHanh from bansaosach,sach,thongtinmuontrasach,nguoimuon,chitietmuonsach,nhaphathanh where nguoimuon.maNguoiMuon = ? \n"
-                        + "and nguoimuon.maNguoiMuon = thongtinmuontrasach.maNguoiMuon\n"
-                        + "and thongtinmuontrasach.maThongTinMuonTraSach = chitietmuonsach.maThongTinMuonSach\n"
-                        + "and chitietmuonsach.maBanSaoSach = bansaosach.maBanSao and thongtinmuontrasach.trangThai =0\n"
-                        + "and sach.maSach=bansaosach.maSach\n"
-                        + "and nhaphathanh.maNhaPhatHanh = sach.maNhaPhatHanh");
+                "SELECT Sach.TenSach, Sach.MaSach, NhaPhatHanh.MaNPH from BanSaoSach,Sach,ThongTinMuonTraSach,NguoiMuon,ChiTietMuonSach,NhaPhatHanh where NguoiMuon.MaNguoiMuon = ? \n"
+                        + "and NguoiMuon.MaNguoiMuon = ThongTinMuonTraSach.MaNguoiMuon\n"
+                        + "and ThongTinMuonTraSach.MaTTMuonTra = ChiTietMuonSach.MaTTMuonTra\n"
+                        + "and ChiTietMuonSach.MaSachCP = BanSaoSach.MaSachCP and ThongTinMuonTraSach.TrangThai =0\n"
+                        + "and Sach.MaSach=BanSaoSach.MaSach\n"
+                        + "and NhaPhatHanh.MaNPH = Sach.MaNPH");
         st.setString(1, idBorrower);
         ResultSet rs = st.executeQuery();
         while (rs.next()) {
-            String maSach = rs.getString("maSach");
-            Publisher tenNhaPhatHanh = new Publisher().getPublisherByIdPublisher(rs.getInt("maNhaPhatHanh"));
-            String tenSach = rs.getString("tenSach");
+            String maSach = rs.getString("MaSach");
+            Publisher tenNhaPhatHanh = new Publisher().getPublisherByIdPublisher(rs.getInt("MaNhaPhatHanh"));
+            String tenSach = rs.getString("TenSach");
+            float priceBook = rs.getFloat("GiaThue");
             String tenTacGia = book.getNameAuthorByIdBook(maSach);
-            book = new Book(maSach, tenSach, tenTacGia, null, null, tenNhaPhatHanh);
+            book = new Book(maSach, tenSach, tenTacGia, priceBook, null, tenNhaPhatHanh);
 
             // book.set
             books.add(book);
@@ -244,21 +244,21 @@ public class Book extends DataAccessHelper {
      * 
      * @see SQLException
      */
-    public ArrayList<Integer> getNumberOfCopy(String idBorrower) throws ClassNotFoundException, SQLException {
-        ArrayList<Integer> numberofCopy = new ArrayList<>();
+    public ArrayList<String> getNumberOfCopy(String idBorrower) throws ClassNotFoundException, SQLException {
+        ArrayList<String> numberofCopy = new ArrayList<>();
         connectDatabase();
         PreparedStatement st = conn.prepareStatement(
-                "SELECT bansaoSach.soThuTu from bansaosach,sach,thongtinmuontrasach,nguoimuon,chitietmuonsach,nhaphathanh where nguoimuon.maNguoiMuon = ? \n"
+                "SELECT bansaoSach.ViTri from bansaosach,sach,thongtinmuontrasach,nguoimuon,chitietmuonsach,nhaphathanh where nguoimuon.maNguoiMuon = ? \n"
                         + "and nguoimuon.maNguoiMuon = thongtinmuontrasach.maNguoiMuon\n"
-                        + "and thongtinmuontrasach.maThongTinMuonTraSach = chitietmuonsach.maThongTinMuonSach\n"
-                        + "and chitietmuonsach.maBanSaoSach = bansaosach.maBanSao\n"
+                        + "and thongtinmuontrasach.MaTTMuonTra = chitietmuonsach.MaTTMuonTra\n"
+                        + "and chitietmuonsach.MaSachCP = bansaosach.MaSachCP\n"
                         + "and sach.maSach=bansaosach.maSach\n"
-                        + "and nhaphathanh.maNhaPhatHanh = sach.maNhaPhatHanh");
+                        + "and nhaphathanh.MaNPH = sach.MaNPH");
         st.setString(1, idBorrower);
 
         ResultSet rs = st.executeQuery();
         while (rs.next()) {
-            numberofCopy.add(rs.getInt("soThuTu"));
+            numberofCopy.add(rs.getString("ViTri"));
         }
         return numberofCopy;
     }
@@ -279,27 +279,27 @@ public class Book extends DataAccessHelper {
         ArrayList<Book> books = new ArrayList<>();
         connectDatabase();
         Book book;
-        String sqlCommand = "SELECT sach.maSach,tenSach,tenNhaPhatHanh,tenTacGia,sach.isbn,nhaphathanh.maNhaPhatHanh FROM sach, tacgia,nhaphathanh,chitiettacgia where sach.maSach like '%"
+        String sqlCommand = "SELECT sach.maSach,tenSach,tenNhaPhatHanh,tenTacGia,sach.GiaThue,nhaphathanh.maNhaPhatHanh FROM sach, tacgia,nhaphathanh,chitiettacgia where sach.maSach like '%"
                 + info + "%' \n"
                 + "and sach.maSach = chitiettacgia.maSach and chitiettacgia.maTacGia =tacgia.maTacGia\n"
-                + "and sach.maNhaPhatHanh = nhaphathanh.maNhaPhatHanh group by sach.maSach\n"
+                + "and sach.MaNPH = nhaphathanh.MaNPH group by sach.maSach\n"
                 + "union\n"
-                + "(SELECT sach.maSach,tenSach,tenNhaPhatHanh,tenTacGia,sach.isbn,nhaphathanh.maNhaPhatHanh  FROM sach, tacgia,nhaphathanh,chitiettacgia where sach.tenSach like '%"
+                + "(SELECT sach.maSach,tenSach,tenNPH,tenTacGia,sach.GiaThue,nhaphathanh.maNPH FROM sach, tacgia,nhaphathanh,chitiettacgia where sach.tenSach like '%"
                 + info + "%' \n"
                 + "and sach.maSach = chitiettacgia.maSach and chitiettacgia.maTacGia =tacgia.maTacGia\n"
-                + "and sach.maNhaPhatHanh = nhaphathanh.maNhaPhatHanh group by sach.maSach\n"
+                + "and sach.maNPH = nhaphathanh.maNPH group by sach.maSach\n"
                 + ")\n"
                 + "union\n"
-                + "(SELECT sach.maSach,tenSach,tenNhaPhatHanh,tenTacGia,sach.isbn,nhaphathanh.maNhaPhatHanh  FROM sach, tacgia,nhaphathanh,chitiettacgia where nhaphathanh.tenNhaPhatHanh like '%"
+                + "(SELECT sach.maSach,tenSach,tenNhaPhatHanh,tenTacGia,sach.GiaThue,nhaphathanh.maNPH  FROM sach, tacgia,nhaphathanh,chitiettacgia where nhaphathanh.tenNPH like '%"
                 + info + "%' \n"
                 + "and sach.maSach = chitiettacgia.maSach and chitiettacgia.maTacGia =tacgia.maTacGia\n"
-                + "and sach.maNhaPhatHanh = nhaphathanh.maNhaPhatHanh group by sach.maSach\n"
+                + "and sach.maNPH = nhaphathanh.maNPH group by sach.maSach\n"
                 + ")\n"
                 + "union\n"
-                + "(SELECT sach.maSach,tenSach,tenNhaPhatHanh,tenTacGia,sach.isbn,nhaphathanh.maNhaPhatHanh  FROM sach, tacgia,nhaphathanh,chitiettacgia where tacgia.tenTacGia like '%"
+                + "(SELECT sach.maSach,tenSach,tenNPH,tenTacGia,sach.GiaThue,nhaphathanh.maNPH  FROM sach, tacgia,nhaphathanh,chitiettacgia where tacgia.tenTacGia like '%"
                 + info + "%' \n"
                 + "and sach.maSach = chitiettacgia.maSach and chitiettacgia.maTacGia =tacgia.maTacGia\n"
-                + "and sach.maNhaPhatHanh = nhaphathanh.maNhaPhatHanh group by sach.maSach\n"
+                + "and sach.maNPH = nhaphathanh.maNPH group by sach.maSach\n"
                 + ")";
         PreparedStatement st = conn.prepareStatement(sqlCommand);
         ResultSet rs = st.executeQuery();
@@ -307,10 +307,10 @@ public class Book extends DataAccessHelper {
             String titleBook = rs.getString("tenSach");
             String idBook = rs.getString("maSach");
             Publisher namePublisher = new Publisher().getPublisherByIdPublisher(rs.getInt("maNhaPhatHanh"));
-            String isbn = rs.getString("isbn");
             String nameAuthor = getNameAuthorByIdBook(idBook);
+            float priceBook = rs.getFloat("GiaThue");
             ArrayList<CopyOfBook> listBanSao = new CopyOfBook().getListCopyOfBookByIdBook(idBook);
-            book = new Book(idBook, titleBook, nameAuthor, isbn, listBanSao, namePublisher);
+            book = new Book(idBook, titleBook, nameAuthor, priceBook, listBanSao, namePublisher);
             books.add(book);
         }
         return books;
@@ -327,11 +327,11 @@ public class Book extends DataAccessHelper {
      * 
      * @see SQLException
      */
-    public void updateBookInfo(String maBanSao) throws ClassNotFoundException, SQLException {
+    public void updateBookInfo(String MaSachCP) throws ClassNotFoundException, SQLException {
         connectDatabase();
-        String sqlCommand = "UPDATE bansaosach SET trangThai='2' WHERE maBanSao= ?";
+        String sqlCommand = "UPDATE bansaosach SET trangThai='2' WHERE MaSachCP= ?";
         PreparedStatement st = conn.prepareStatement(sqlCommand);
-        st.setString(1, maBanSao);
+        st.setString(1, MaSachCP);
         st.execute();
     }
 
@@ -342,7 +342,7 @@ public class Book extends DataAccessHelper {
         connectDatabase();
         ResultSet rs = null;
         PreparedStatement preparedStatement;
-        String sql1 = "select sach.maSach,sach.tenSach,bansaosach.maBanSao,bansaosach.trangThai,bansaosach.gia from  sach,bansaosach\n"
+        String sql1 = "select sach.maSach,sach.tenSach,bansaosach.MaSachCP,bansaosach.trangThai,sach.GiaThue from  sach,bansaosach\n"
                 + "where   sach.maSach=? and bansaosach.maSach= sach.maSach;";
         preparedStatement = conn.prepareStatement(sql1);
         preparedStatement.setString(1, maSach);
@@ -372,9 +372,9 @@ public class Book extends DataAccessHelper {
         Object[] a = new Object[5];
         ResultSet rs = null;
         PreparedStatement preparedStatement;
-        String sql = "select sach.maSach,sach.tenSach,nhaphathanh.tenNhaPhatHanh,tacgia.tenTacGia,sach.isbn from  sach,tacgia,nhaphathanh,chitiettacgia \n"
+        String sql = "select sach.maSach,sach.tenSach,nhaphathanh.TenNPH,tacgia.tenTacGia,sach.GiaThue from  sach,tacgia,nhaphathanh,chitiettacgia \n"
                 + "where sach.maSach= chitiettacgia.maSach and chitiettacgia.maTacGia= tacgia.maTacGia\n"
-                + "and sach.maNhaPhatHanh = nhaphathanh.maNhaPhatHanh  and sach.maSach=?;";
+                + "and sach.maNPH = nhaphathanh.maNPH  and sach.maSach=?;";
         preparedStatement = conn.prepareStatement(sql);
         preparedStatement.setString(1, maSach);
         rs = preparedStatement.executeQuery();
@@ -407,7 +407,7 @@ public class Book extends DataAccessHelper {
             Book book = new Book();
             book.setbook_ID(rs.getString("maSach"));
             book.setbook_Title(rs.getString("tenSach"));
-            Publisher publisher = new Publisher().getPublisherByIdPublisher(rs.getInt("maNhaPhatHanh"));
+            Publisher publisher = new Publisher().getPublisherByIdPublisher(rs.getInt("maNPH"));
             book.setbook_Publisher(publisher);
             String nameAuthor = getNameAuthorByIdBook(book.getbook_ID());
             book.setbook_Author(nameAuthor);

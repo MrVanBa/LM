@@ -383,9 +383,7 @@ public class AddCoppyOfBookForm extends javax.swing.JPanel {
             CopyOfBook copyOfBook = new CopyOfBook();
             for (int i = 0;i<tableAddCoppyOfNewBook.getRowCount();i++){
                 copyOfBook.setcopy_of_book_ID((String) tableAddCoppyOfNewBook.getValueAt(i, 0));
-                copyOfBook.setcopy_of_book_Num_Of_Copy((int) tableAddCoppyOfNewBook.getValueAt(i, 1));
-                copyOfBook.setcopy_of_book_Price((int) tableAddCoppyOfNewBook.getValueAt(i, 4));
-                copyOfBook.setcopy_of_book_Type(((boolean)tableAddCoppyOfNewBook.getValueAt(i, 2))?CopyOfBook.TypeOfCopy.REFERENCE:CopyOfBook.TypeOfCopy.BORROWABLE);
+                copyOfBook.setcopy_of_book_Num_Of_Copy((String) tableAddCoppyOfNewBook.getValueAt(i, 1));
                 Book_Controller.getInstance().addCopyOfBookByIdBook(book.getbook_ID(), copyOfBook);
             }
             notify("Đã thêm");
@@ -416,8 +414,8 @@ public class AddCoppyOfBookForm extends javax.swing.JPanel {
                 isReference = true;
             }
             model.addRow(new Object[]{
-                BookHelper.getNewIdCoppyOfBook(book,i+1),
-                BookHelper.getNewNumberCoppyOfBook(book,i+1),
+                BookHelper.getNewIdCoppyOfBook(book,Integer.toString(i+1)),
+                BookHelper.getNewNumberCoppyOfBook(book,Integer.toString(i+1)),
                 isReference,
                 !isReference,
                 price
@@ -443,17 +441,12 @@ public class AddCoppyOfBookForm extends javax.swing.JPanel {
         model.setRowCount(0);
         for (int i = 0; i < copyOfBooks.size(); i++) {
             boolean isReference = true ;
-            if (copyOfBooks.get(i).getcopy_of_book_Type() == CopyOfBook.TypeOfCopy.REFERENCE) {
-                isReference = true;
-            } else if (copyOfBooks.get(i).getcopy_of_book_Type() == CopyOfBook.TypeOfCopy.BORROWABLE) {
-                isReference = false;
-            }
+
             model.addRow(new Object[]{
                 copyOfBooks.get(i).getcopy_of_book_ID(),
                 copyOfBooks.get(i).getcopy_of_book_Num_Of_Copy(),
                 isReference,
                 !isReference,
-                copyOfBooks.get(i).getcopy_of_book_Price()
             });
         }
         tableAddCoppyOfNewBook.setModel(model);
@@ -475,7 +468,6 @@ public class AddCoppyOfBookForm extends javax.swing.JPanel {
         lbNameBook.setText("Tiêu đề: " + book.getbook_Title());
         lbAuthor.setText("Tác Giả: " + book.getbook_Author());
         lbPublishingCopany.setText("Nhà phát hành: " + book.getbook_Publisher().getpublisher_Name());
-        lbISBN.setText("ISBN: " + book.getbook_ISBN());
         lbNumberOfCoppy.setText("Số bản sao hiện có: " + book.getbook_ListofCopy().size());
     }
 

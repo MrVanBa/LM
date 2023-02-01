@@ -27,7 +27,7 @@ public class Librarian extends User {
         Librarian thuThu = null;
         connectDatabase();
         PreparedStatement st = conn.prepareStatement(
-                "SELECT * FROM tkxdpm.taikhoan,tkxdpm.thuthu where taikhoan.tenTaiKhoan = ? and taikhoan.tenTaiKhoan = thuthu.tenTaiKhoan");
+                "SELECT * FROM QuanLyThuVien_3.taikhoan,QuanLyThuVien_3.thuthu where taikhoan.MaTK = ? and taikhoan.MaTK = thuthu.MaTK");
         st.setString(1, username);
         ResultSet rs = st.executeQuery();
         while (rs.next()) {

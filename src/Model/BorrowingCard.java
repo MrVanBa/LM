@@ -16,7 +16,7 @@ public class BorrowingCard extends DataAccessHelper {
     private String      borrowing_card_ID;
     private String      borrowing_card_Actived_Code;
     private String      borrowing_card_Expried_Date;
-    private String      borrowing_card_Status;
+    private int         borrowing_card_Status;
     private String      borrowing_card_Borrower_ID;
     
     public BorrowingCard() {
@@ -60,11 +60,11 @@ public class BorrowingCard extends DataAccessHelper {
         this.borrowing_card_Expried_Date = borrowingcard_Expried_Date;
     }
 
-    public String getborrowingcard_Status() {
+    public int getborrowingcard_Status() {
         return borrowing_card_Status;
     }
 
-    public void setborrowingcard_Status(String borrowingcard_Status) {
+    public void setborrowingcard_Status(int borrowingcard_Status) {
         this.borrowing_card_Status = borrowingcard_Status;
     }
 
@@ -86,10 +86,10 @@ public class BorrowingCard extends DataAccessHelper {
     public ArrayList<BorrowingCard> getAllCard() throws ClassNotFoundException, SQLException {
         ArrayList<BorrowingCard> allCard = new ArrayList<>();
         connectDatabase();
-        PreparedStatement st = conn.prepareStatement("SELECT * FROM tkxdpm.themuon");
+        PreparedStatement st = conn.prepareStatement("SELECT * FROM QuanLyThuVien_3.themuon");
         ResultSet rs = st.executeQuery();
         while (rs.next()) {
-            String idBorrowingCard = rs.getString("maTheMuon");
+            String idBorrowingCard = rs.getString("maThe");
             String borrowerId = rs.getString("maNguoiMuon");
             Borrower borrower = new Borrower().getBorrower(borrowerId);
             String activedCode = rs.getString("maKichHoat");
@@ -112,10 +112,10 @@ public class BorrowingCard extends DataAccessHelper {
     public ArrayList<BorrowingCard> getCardById(String id) throws ClassNotFoundException, SQLException {
         ArrayList<BorrowingCard> allCard = new ArrayList<>();
         connectDatabase();
-        PreparedStatement st = conn.prepareStatement("SELECT * FROM tkxdpm.themuon where themuon.maTheMuon like \'%" + id + "%\'");
+        PreparedStatement st = conn.prepareStatement("SELECT * FROM QuanLyThuVien_3.themuon where themuon.maThe like \'%" + id + "%\'");
         ResultSet rs = st.executeQuery();
         while (rs.next()) {
-            String idBorrowingCard = rs.getString("maTheMuon");
+            String idBorrowingCard = rs.getString("maThe");
             String idBorrower = rs.getString("maNguoiMuon");
             Borrower borrower = new Borrower().getBorrower(idBorrower);
             String activedCode = rs.getString("maKichHoat");
@@ -137,10 +137,10 @@ public class BorrowingCard extends DataAccessHelper {
     public BorrowingCard getCardByIdBorrower(String idBorrower) throws SQLException, ClassNotFoundException {
         BorrowingCard card = new BorrowingCard();
         connectDatabase();
-        PreparedStatement st = conn.prepareStatement("SELECT * FROM tkxdpm.themuon where themuon.maNguoiMuon = \"" + idBorrower + "\"");
+        PreparedStatement st = conn.prepareStatement("SELECT * FROM QuanLyThuVien_3.themuon where themuon.maNguoiMuon = \"" + idBorrower + "\"");
         ResultSet rs = st.executeQuery();
         while (rs.next()) {
-            String idBorrowingCard = rs.getString("maTheMuon");
+            String idBorrowingCard = rs.getString("maThe");
             //  Date sqlDate= rs.getDate("ngayHetHan");
             String expriedDate = rs.getString("ngayHetHan");
             //System.out.println(expriedDate);
@@ -163,9 +163,9 @@ public class BorrowingCard extends DataAccessHelper {
         User userSearch = new User();
         ResultSet rs = null;
         PreparedStatement preparedStatement;
-        String sql = "SELECT taikhoan.tenTaiKhoan,taiKhoan.ten,taikhoan.gioiTinh,taikhoan.email,taikhoan.soDienThoai\n"
+        String sql = "SELECT taikhoan.MaTK,taiKhoan.HoTen,taikhoan.gioiTinh,taikhoan.email,taikhoan.SDT\n"
                 + "                FROM taikhoan\n"
-                + "                where taikhoan.tenTaiKhoan=?;";
+                + "                where taikhoan.MaTK=?;";
         preparedStatement = conn.prepareStatement(sql);
         preparedStatement.setString(1, tenTaiKhoan);
         rs = preparedStatement.executeQuery();
@@ -182,7 +182,7 @@ public class BorrowingCard extends DataAccessHelper {
             closeDatabase();
             return userSearch;
         } catch (SQLException ex) {
-            Logger.getLogger(BorrowingCard.class.getName()).log(Level.SEVERE, "em chưa đăng kí nhé,mệt mỏi!!!", "");
+            Logger.getLogger(BorrowingCard.class.getName()).log(Level.SEVERE, "em chưa đăng kí!!!", "");
         }
         return userSearch;
     }
@@ -201,7 +201,7 @@ public class BorrowingCard extends DataAccessHelper {
         String BorrowerID;
         ResultSet rs = null;
         PreparedStatement  preparedStatementGetMaNguoiMuon;
-        String sqlGetMaNguoiMuon = "select nguoimuon.maNguoiMuon from nguoimuon where nguoimuon.tenTaiKhoan=?;";
+        String sqlGetMaNguoiMuon = "select nguoimuon.maNguoiMuon from nguoimuon where nguoimuon.MaTK=?;";
         preparedStatementGetMaNguoiMuon = conn.prepareStatement(sqlGetMaNguoiMuon);
         preparedStatementGetMaNguoiMuon.setString(1, tk.getuser_Username());
         rs = preparedStatementGetMaNguoiMuon.executeQuery();
@@ -210,19 +210,18 @@ public class BorrowingCard extends DataAccessHelper {
         closeDatabase();
 //       tạo người mượn mới
         connectDatabase();
-        String sql = "UPDATE nguoimuon SET  mssv=?, soTienDatCoc=?, giaiDoanHoc=?, trangThai=? WHERE maNguoiMuon=?;";
+        String sql = "UPDATE nguoimuon SET  mssv=?, TienCoc=?, GiaiDoanHoc=? WHERE maNguoiMuon=?;";
         PreparedStatement preparedStatement = conn.prepareStatement(sql);
         preparedStatement.setString(1, nm.getborrower_Student_ID());
         preparedStatement.setString(2, String.valueOf(nm.getborrower_Deposit()));
         preparedStatement.setString(3, nm.getborrower_Study_Period());
-        preparedStatement.setString(4, "1");
-        preparedStatement.setString(5, BorrowerID);
+        preparedStatement.setString(4, BorrowerID);
         System.out.println(tk.getuser_Username());
         preparedStatement.executeUpdate();
         closeDatabase();
 // tạo thẻ mới        
         connectDatabase();
-        String sql1 = "INSERT INTO themuon (maTheMuon, ngayHetHan, trangThai, maKichHoat, maNguoiMuon) VALUES (?,?,?,?,?);";
+        String sql1 = "INSERT INTO themuon (MaThe, ngayHetHan, trangThai, maKichHoat, maNguoiMuon) VALUES (?,?,?,?,?);";
         PreparedStatement preparredStatementCreateNewCard = conn.prepareStatement(sql1);
         preparredStatementCreateNewCard.setString(1, BorrowerID);
         preparredStatementCreateNewCard.setString(2, tm.getborrowingcard_Expried_Date());

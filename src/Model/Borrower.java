@@ -7,26 +7,25 @@ public class Borrower extends User {
 
     private String borrower_ID;
     private BorrowingCard borrower_Card;
-    private int borrower_Deposit;
+    private float borrower_Deposit;
     private String borrower_Student_ID;
     private String borrower_Study_Period;
     private String borrower_Username;
-    private int borrower_Status; /// 0 : inactive 1 : active
 
-    private final String GET_BORROWER_BY_USERNAME = "SELECT * FROM tkxdpm.taikhoan,tkxdpm.nguoimuon where taikhoan.tenTaiKhoan = ? and taikhoan.tenTaiKhoan = nguoimuon.tenTaiKhoan";
-    private final String GET_LIST_BORROWER = "SELECT * FROM tkxdpm.nguoimuon,themuon,taikhoan where nguoimuon.tenTaiKhoan = taikhoan.tenTaiKhoan and nguoimuon.maNguoiMuon = themuon.maNguoiMuon  ";
-    private final String SEARCH_BORROWER = "SELECT nguoimuon.maNguoiMuon,taikhoan.ten, taikhoan.matKhau,taikhoan.tenTaiKhoan,"
-            + "taikhoan.email,taikhoan.gioiTinh,taikhoan.soDienThoai, nguoimuon.soTienDatCoc, "
-            + "nguoimuon.mssv, nguoimuon.giaiDoanHoc,nguoimuon.trangThai,themuon.maTheMuon, themuon.maKichHoat,themuon.maKichHoat,themuon.ngayHetHan  "
-            + "FROM tkxdpm.nguoimuon,taikhoan,themuon "
-            + "where (nguoimuon.tenTaiKhoan = taikhoan.tenTaiKhoan) and "
+    private final String GET_BORROWER_BY_USERNAME = "SELECT * FROM QuanLyThuVien_3.taikhoan,QuanLyThuVien_3.nguoimuon where taikhoan.MaTK = ? and taikhoan.MaTK = nguoimuon.MaTK";
+    private final String GET_LIST_BORROWER = "SELECT * FROM QuanLyThuVien_3.nguoimuon,themuon,taikhoan where nguoimuon.MaTK = taikhoan.MaTK and nguoimuon.maNguoiMuon = themuon.maNguoiMuon  ";
+    private final String SEARCH_BORROWER = "SELECT nguoimuon.maNguoiMuon,taikhoan.HoTen, taikhoan.matKhau,taikhoan.MaTK,"
+            + "taikhoan.email,taikhoan.gioiTinh,taikhoan.SDT, nguoimuon.TienCoc, "
+            + "nguoimuon.mssv, nguoimuon.giaiDoanHoc,themuon.maThe, themuon.maKichHoat,themuon.maKichHoat,themuon.ngayHetHan  "
+            + "FROM QuanLyThuVien_3.nguoimuon,taikhoan,themuon "
+            + "where (nguoimuon.MaTK = taikhoan.MaTK) and "
             + "(nguoimuon.maNguoiMuon = themuon.maNguoiMuon) and "
             + "((nguoimuon.maNguoiMuon like ?) or (taikhoan.ten like ?))";
 
     public Borrower() {
     }
 
-    public Borrower(String borrower_ID, String borrower_Student_ID, int borrower_Deposit, String borrower_Study_Period,
+    public Borrower(String borrower_ID, String borrower_Student_ID, float borrower_Deposit, String borrower_Study_Period,
             String borrower_Username) {
         super();
         this.borrower_ID = borrower_ID;
@@ -36,7 +35,7 @@ public class Borrower extends User {
         this.borrower_Username = borrower_Username;
     }
 
-    public Borrower(String borrower_ID, int borrower_Deposit, String borrower_Student_ID, String borrower_Study_Period, String user_Name, String user_Username,
+    public Borrower(String borrower_ID, float borrower_Deposit, String borrower_Student_ID, String borrower_Study_Period, String user_Name, String user_Username,
             String user_Password, String user_Email, boolean user_isMale, String user_Phone) {
         super(user_Name, user_Username, user_Password, user_Email, user_isMale, user_Phone);
         this.borrower_ID = borrower_ID;
@@ -45,7 +44,7 @@ public class Borrower extends User {
         this.borrower_Study_Period = borrower_Study_Period;
     }
 
-    public Borrower(String borrower_ID, int borrower_Deposit, String borrower_Student_ID, String borrower_Study_Period, BorrowingCard borrower_Card, String user_Name, String user_Username,
+    public Borrower(String borrower_ID, float borrower_Deposit, String borrower_Student_ID, String borrower_Study_Period, BorrowingCard borrower_Card, String user_Name, String user_Username,
     String user_Password, String user_Email, boolean user_isMale, String user_Phone) {
         super(user_Name, user_Username, user_Password, user_Email, user_isMale, user_Phone);
         this.borrower_Card = borrower_Card;
@@ -71,7 +70,7 @@ public class Borrower extends User {
         this.borrower_Card = borrower_Card;
     }
 
-    public int getborrower_Deposit() {
+    public float getborrower_Deposit() {
         return borrower_Deposit;
     }
 
@@ -103,14 +102,6 @@ public class Borrower extends User {
         this.borrower_Username = borrower_Username;
     }
 
-    public int getborrower_Status() {
-        return borrower_Status;
-    }
-
-    public void setborrower_Status(int borrower_Status) {
-        this.borrower_Status = borrower_Status;
-    }
-
     /**
      * Hàm này thực hiện chức năng lấy người mượn từ username
      * 
@@ -125,18 +116,16 @@ public class Borrower extends User {
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
             String idBorrower = rs.getString("maNguoiMuon");
-            String name = rs.getString("ten");
+            String name = rs.getString("HoTen");
             String password = rs.getString("matKhau");
             String email = rs.getString("email");
             boolean isMale = rs.getString("gioiTinh").equalsIgnoreCase("nam");
-            String phone = rs.getString("soDienThoai");
-            int deposit = rs.getInt("soTienDatCoc");
+            String phone = rs.getString("SDT");
+            float deposit = rs.getFloat("TienCoc");
             String idStudent = rs.getString("mssv");
             String studyPeriod = rs.getString("giaiDoanHoc");
-            int status = rs.getInt("trangThai");
             borrower = new Borrower(idBorrower, deposit, idStudent, studyPeriod, name, username, password, email,
                     isMale, phone);
-            borrower.setborrower_Status(status);
         }
         closeDatabase();
         return borrower;
@@ -153,26 +142,21 @@ public class Borrower extends User {
         PreparedStatement ps = conn.prepareStatement(GET_LIST_BORROWER);
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
-            BorrowingCard borrowingCard = new BorrowingCard(rs.getString("maTheMuon"), rs.getString("maKichHoat"),
+            BorrowingCard borrowingCard = new BorrowingCard(rs.getString("maThe"), rs.getString("maKichHoat"),
                     rs.getString("ngayHetHan"));
             String idBorrower = rs.getString("maNguoiMuon");
-            String name = rs.getString("ten");
+            String name = rs.getString("HoTen");
             String password = rs.getString("matKhau");
             String email = rs.getString("email");
             boolean isMale = rs.getString("gioiTinh").equalsIgnoreCase("nam");
-            String phone = rs.getString("soDienThoai");
-            int deposit = rs.getInt("soTienDatCoc");
+            String phone = rs.getString("SDT");
+            float deposit = rs.getFloat("TienCoc");
             String idStudent = rs.getString("mssv");
             String studyPeriod = rs.getString("giaiDoanHoc");
-            int status = rs.getInt("trangThai");
-            String username = rs.getString("tenTaiKhoan");
-            if (status != 0) {
-                Borrower borrower = new Borrower(idBorrower, deposit, idStudent, studyPeriod, borrowingCard, name,
+            String username = rs.getString("MaTK");
+            Borrower borrower = new Borrower(idBorrower, deposit, idStudent, studyPeriod, borrowingCard, name,
                         username, password, email, isMale, phone);
-                arr.add(borrower);
-            } else {
-                continue;
-            }
+            arr.add(borrower);
         }
         closeDatabase();
         return arr;
@@ -192,20 +176,20 @@ public class Borrower extends User {
         Borrower borrower = null;
         connectDatabase();
         PreparedStatement st = conn.prepareStatement(
-                "SELECT * FROM tkxdpm.themuon,tkxdpm.nguoimuon,tkxdpm.taikhoan where themuon.maNguoiMuon = ? and themuon.maNguoiMuon = nguoimuon.maNguoiMuon and nguoiMuon.tenTaiKhoan = taikhoan.tenTaiKhoan");
+                "SELECT * FROM QuanLyThuVien_3.themuon,QuanLyThuVien_3.nguoimuon,QuanLyThuVien_3.taikhoan where themuon.maNguoiMuon = ? and themuon.maNguoiMuon = nguoimuon.maNguoiMuon and nguoiMuon.MaTK = taikhoan.MaTK");
         st.setString(1, borrowerId);
         ResultSet rs = st.executeQuery();
         while (rs.next()) {
             String idBorrower = rs.getString("maNguoiMuon");
-            String name = rs.getString("ten");
+            String name = rs.getString("HoTen");
             String password = rs.getString("matKhau");
             String email = rs.getString("email");
             boolean isMale = rs.getString("gioiTinh").equalsIgnoreCase("nam");
-            String phone = rs.getString("soDienThoai");
-            int deposit = rs.getInt("soTienDatCoc");
+            String phone = rs.getString("SDT");
+            float deposit = rs.getFloat("TienCoc");
             String idStudent = rs.getString("mssv");
             String studyPeriod = rs.getString("giaiDoanHoc");
-            String username = rs.getString("tenTaiKhoan");
+            String username = rs.getString("MaTK");
             
             borrower = new Borrower(idBorrower, deposit, idStudent, studyPeriod, name, username, password, email,
                     isMale, phone);
@@ -231,26 +215,21 @@ public class Borrower extends User {
         ps.setString(2, "%" + key + "%");
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
-            BorrowingCard borrowingCard = new BorrowingCard(rs.getString("maTheMuon"), rs.getString("maKichHoat"),
+            BorrowingCard borrowingCard = new BorrowingCard(rs.getString("maThe"), rs.getString("maKichHoat"),
                     rs.getString("ngayHetHan"));
             String idBorrower = rs.getString("maNguoiMuon");
-            String name = rs.getString("ten");
-            String username = rs.getString("tenTaiKhoan");
+            String name = rs.getString("HoTen");
+            String username = rs.getString("MaTK");
             String password = rs.getString("matKhau");
             String email = rs.getString("email");
             boolean isMale = rs.getString("gioiTinh").equalsIgnoreCase("nam");
-            String phone = rs.getString("soDienThoai");
-            int deposit = rs.getInt("soTienDatCoc");
+            String phone = rs.getString("SDT");
+            float deposit = rs.getFloat("TienCoc");
             String idStudent = rs.getString("mssv");
             String studyPeriod = rs.getString("giaiDoanHoc");
-            int status = rs.getInt("trangThai");
-            if (status != 0) {
-                Borrower borrower = new Borrower(idBorrower, deposit, idStudent, studyPeriod, borrowingCard, name,
-                        username, password, email, isMale, phone);
-                arr.add(borrower);
-            } else {
-                continue;
-            }
+            Borrower borrower = new Borrower(idBorrower, deposit, idStudent, studyPeriod, borrowingCard, name,
+                    username, password, email, isMale, phone);
+            arr.add(borrower);
         }
         closeDatabase();
         return arr;

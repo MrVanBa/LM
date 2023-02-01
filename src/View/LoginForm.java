@@ -37,7 +37,6 @@ public class LoginForm extends javax.swing.JFrame {
     private void initComponents() {
 
         btnLoginForCustomer = new javax.swing.JButton();
-        btnRegisterAccount = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -54,12 +53,6 @@ public class LoginForm extends javax.swing.JFrame {
             }
         });
 
-        btnRegisterAccount.setText("Đăng kí");
-        btnRegisterAccount.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRegisterAccountActionPerformed(evt);
-            }
-        });
 
         jLabel1.setBackground(new java.awt.Color(204, 0, 0));
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -95,13 +88,12 @@ public class LoginForm extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(tfUserName, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
                             .addComponent(tfPassword)))
-                    .addComponent(btnRegisterAccount, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnLoginForLibrarian, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnLoginForCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btnLoginForCustomer, btnRegisterAccount});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btnLoginForCustomer});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -120,21 +112,13 @@ public class LoginForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnLoginForCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnRegisterAccount)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
-        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btnLoginForCustomer, btnRegisterAccount});
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {tfPassword, tfUserName});
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnRegisterAccountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterAccountActionPerformed
-        // TODO add your handling code here:
-        System.out.println("dang ki");
-    }//GEN-LAST:event_btnRegisterAccountActionPerformed
 
     private void btnLoginForCustomerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginForCustomerActionPerformed
         // TODO add your handling code here:
@@ -181,14 +165,10 @@ public class LoginForm extends javax.swing.JFrame {
                 main.setVisible(true);
                 this.dispose();
             } else if (user instanceof Borrower && typeUser == BORROWER) {
-                if (((Borrower) user).getborrower_Status() == 0) {
-                    showNotification("Hãy đến thư viện để nhận thẻ và mã kích hoạt tài khoản",JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    showNotification("Đăng nhập thành công", JOptionPane.INFORMATION_MESSAGE);
-                    RegistrationOfBorrowingBookForm form = new RegistrationOfBorrowingBookForm((Borrower) user);
-                    form.setVisible(true);
-                    this.dispose();
-                }
+                showNotification("Đăng nhập thành công", JOptionPane.INFORMATION_MESSAGE);
+                RegistrationOfBorrowingBookForm form = new RegistrationOfBorrowingBookForm((Borrower) user);
+                form.setVisible(true);
+                this.dispose();
             } else {
                 showNotification("Tên tài khoản hoặc mật khẩu chưa chính xác", JOptionPane.INFORMATION_MESSAGE);
             }
@@ -234,7 +214,9 @@ public class LoginForm extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new LoginForm().setVisible(true);
+                // new LoginForm().setVisible(true);
+                new MainFormOfLibrarian().setVisible(true);
+                // new LendBookForm().setVisible(true);
             }
         });
     }
@@ -242,7 +224,6 @@ public class LoginForm extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLoginForCustomer;
     private javax.swing.JButton btnLoginForLibrarian;
-    private javax.swing.JButton btnRegisterAccount;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

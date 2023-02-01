@@ -30,13 +30,10 @@ public class BookHelper {
      * @param book cuốn sách mà muốn thêm bản sao
      * @return String mã bản sao sách vừa được tạo mới
      */
-    public static String getNewIdCoppyOfBook(Book book,int numberOfLastCoppy) {
+    public static String getNewIdCoppyOfBook(Book book,String numberOfLastCopy) {
         ArrayList<CopyOfBook> arr = book.getbook_ListofCopy();
-        numberOfLastCoppy = (arr==null)?numberOfLastCoppy:(numberOfLastCoppy + arr.get(arr.size()-1).getcopy_of_book_Num_Of_Copy());
-        if (numberOfLastCoppy < 10){
-            return book.getbook_ID()+ "-0" + numberOfLastCoppy; 
-        }
-        return book.getbook_ID()+"-"+numberOfLastCoppy;
+        numberOfLastCopy = (arr==null)?numberOfLastCopy:(numberOfLastCopy + arr.get(arr.size()-1).getcopy_of_book_Num_Of_Copy());
+        return book.getbook_ID()+"-"+numberOfLastCopy;
     }
     
     
@@ -45,7 +42,7 @@ public class BookHelper {
      * @param book cuốn sách mà muốn thêm bản sao
      * @return int số hiệu bản sao sách vừa được tạo mới
      */
-    public static int getNewNumberCoppyOfBook(Book book,int numberOfLastCoppy) {
+    public static String getNewNumberCoppyOfBook(Book book,String numberOfLastCoppy) {
         ArrayList<CopyOfBook> arr = book.getbook_ListofCopy();
         numberOfLastCoppy = (arr==null)?numberOfLastCoppy:(numberOfLastCoppy + arr.get(arr.size()-1).getcopy_of_book_Num_Of_Copy());
         return numberOfLastCoppy;

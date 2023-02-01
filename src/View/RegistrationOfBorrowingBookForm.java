@@ -291,15 +291,6 @@ public class RegistrationOfBorrowingBookForm extends javax.swing.JFrame {
             Vector vec = new Vector();
             vec.add(book.getbook_ListofCopy().get(j).getcopy_of_book_ID());
 
-            String typeOfCoppy = "";
-            if (coppyOfBook.getcopy_of_book_Type().toString() == "REFERENCE") {
-                typeOfCoppy = "Tài liệu tham khảo";
-            }
-            if (coppyOfBook.getcopy_of_book_Type().toString() == "BORROWABLE") {
-                typeOfCoppy = "Có thể mượn";
-            }
-            vec.add(typeOfCoppy);
-
             vec.add(coppyOfBook.getcopy_of_book_Num_Of_Copy());
 
             String statusofCoppy = "";

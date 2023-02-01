@@ -37,7 +37,7 @@ public class Author_Controller {
      * @throws ClassNotFoundException
      * @throws SQLException
      */
-    public int getMaxIdAuthor() throws ClassNotFoundException, SQLException {
+    public String getMaxIdAuthor() throws ClassNotFoundException, SQLException {
         return author.getMaxIdAuthor();
     }
 

@@ -409,13 +409,11 @@ public class AcceptCard extends javax.swing.JPanel {
             CreateNewCardFrame.newnguoimuon.setborrower_Study_Period(getStudyPeriod(jComboBox1.getSelectedItem().toString()));
             System.out.println(getStudyPeriod(jComboBox1.getSelectedItem().toString())+"asdjasdhkjsadhaks");
             CreateNewCardFrame.newnguoimuon.setuser_Username(CreateNewCardFrame.taikhoan.getuser_Username());
-            CreateNewCardFrame.newthemuon.setborrowingcard_Status("1");
             CreateNewCardFrame.newthemuon.setborrowingcard_Expried_Date(jTextField4.getText());
             Random r = new Random();
             int a = r.nextInt(999999);
 
             CreateNewCardFrame.newthemuon.setborrowingcard_Actived_Code(String.valueOf(a));
-            CreateNewCardFrame.newthemuon.setborrowingcard_Status("online");
             String b = new Create_BorrowingCard_Controller().registerborrower(CreateNewCardFrame.newnguoimuon, CreateNewCardFrame.newthemuon, CreateNewCardFrame.taikhoan);
             CreateNewCardFrame.newthemuon.setborrowingcard_Borrower_ID(b);
 

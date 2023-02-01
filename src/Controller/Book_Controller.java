@@ -93,11 +93,11 @@ public class Book_Controller {
         book.updateCopyOfBook();
     }
 
-    public ArrayList<Integer> getNumberOfCopy(String idBorrower) throws ClassNotFoundException, SQLException {
+    public ArrayList<String> getNumberOfCopy(String idBorrower) throws ClassNotFoundException, SQLException {
         return new Book().getNumberOfCopy(idBorrower);
     }
 
-    public CopyOfBook.StatusOfCopy getStatusByIdBook(String idBook, int numberOfCopy) throws ClassNotFoundException, SQLException {
+    public CopyOfBook.StatusOfCopy getStatusByIdBook(String idBook, String numberOfCopy) throws ClassNotFoundException, SQLException {
        return new CopyOfBook().getStatusByIdBook(idBook,numberOfCopy);
     }
     

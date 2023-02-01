@@ -602,7 +602,7 @@ public class LendBookForm extends javax.swing.JPanel {
                     b.getborrowing_info_ID(),
                     detailLentBook.getdetail_lent_book_ID(),
                     book.getbook_Title(),
-                    coppyOfBook.getcopy_of_book_Price(),
+                    book.getbook_Price(),
                     b.getborrowing_info_Borrowed_Date(),
                     false,
                     false
@@ -648,7 +648,7 @@ public class LendBookForm extends javax.swing.JPanel {
                     b.getborrowing_info_ID(),
                     detailLentBook.getdetail_lent_book_ID(),
                     book.getbook_Title(),
-                    coppyOfBook.getcopy_of_book_Price(),
+                    book.getbook_Price(),
                     b.getborrowing_info_Borrowed_Date(),
                     detailLentBook.getdetail_lent_book_LentDate(),
                     b.getborrowing_info_Expect_Return_Date()

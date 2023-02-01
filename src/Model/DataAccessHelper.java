@@ -14,12 +14,9 @@ public class DataAccessHelper {
      * @see SQLException
      */
     public void connectDatabase() throws ClassNotFoundException, SQLException {
-        // String url = "jdbc:mysql://localhost:3306/tkxdpm";
-        // String user = "root";
-        // String pass = "1996";
-        String url = "";
-        String user = "";
-        String pass = "";
+        String url = "jdbc:sqlserver://MSI:1433;encrypt=true;databaseName=QuanLyThuVien_3;integratedSecurity=true;";
+        String user = "sa";
+        String pass = "01012001";
         Class.forName("com.mysql.jdbc.Driver");
         conn = DriverManager.getConnection(url, user, pass);
     }
