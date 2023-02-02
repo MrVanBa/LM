@@ -14,11 +14,11 @@ public class DataAccessHelper {
      * @see SQLException
      */
     public void connectDatabase() throws ClassNotFoundException, SQLException {
-        String url = "jdbc:sqlserver://MSI:1433;encrypt=true;databaseName=QuanLyThuVien_3;integratedSecurity=true;";
+        String url = "jdbc:sqlserver://localhost:1433;databaseName=QuanLyThuVien_3;integratedSecurity=true;";
         String user = "sa";
         String pass = "01012001";
         Class.forName("com.mysql.jdbc.Driver");
-        conn = DriverManager.getConnection(url, user, pass);
+        conn = DriverManager.getConnection(url);
     }
 
     /*Hàm này để đóng kết nối cơ sở dữ liệu
