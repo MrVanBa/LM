@@ -27,16 +27,16 @@ public class Librarian extends User {
         Librarian thuThu = null;
         connectDatabase();
         PreparedStatement st = conn.prepareStatement(
-                "SELECT * FROM QuanLyThuVien_3.taikhoan,QuanLyThuVien_3.thuthu where taikhoan.MaTK = ? and taikhoan.MaTK = thuthu.MaTK");
+                "SELECT * FROM TaiKhoan,ThuThu where TaiKhoan.MaTK = ? and TaiKhoan.MaTK = ThuThu.MaTK");
         st.setString(1, username);
         ResultSet rs = st.executeQuery();
         while (rs.next()) {
-            String idLibrarian = rs.getString("maThuThu");
-            String name = rs.getString("ten");
-            String password = rs.getString("matKhau");
-            String email = rs.getString("email");
-            boolean isMale = rs.getString("gioiTinh").equalsIgnoreCase("nam");
-            String phone = rs.getString("soDienThoai");
+            String idLibrarian = rs.getString("MaThuThu");
+            String name = rs.getString("HoTen");
+            String password = rs.getString("MatKhau");
+            String email = rs.getString("Email");
+            boolean isMale = rs.getString("GioiTinh").equalsIgnoreCase("nam");
+            String phone = rs.getString("SDT");
             thuThu = new Librarian(idLibrarian, name, username, password, email, isMale, phone);
         }
         closeDatabase();

@@ -112,11 +112,12 @@ public class User extends DataAccessHelper {
     public boolean checkLogin(String username, String password) throws SQLException, ClassNotFoundException {
         String mk = null;
         connectDatabase();
-        PreparedStatement st = conn.prepareStatement("SELECT matKhau FROM QuanLyThuVien_3.taikhoan where MaTK =?");
+        PreparedStatement st = conn.prepareStatement("SELECT MatKhau FROM TaiKhoan where MaTK =?");
         st.setString(1, username);
         ResultSet rs = st.executeQuery();
         while (rs.next()) {
-            mk = rs.getString("matKhau");
+            mk = rs.getString("MatKhau");
+            System.out.println(mk);
         }
         if (mk == null) {
             return false;
