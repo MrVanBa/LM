@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
 public class LoginForm extends javax.swing.JFrame {
 
     ////Đăng nhập////
-    public static final int LIBRARIAN = 99;
+    public static final int LIBRARIAN = 100;
     public static final int BORROWER = 100;
 
     /**
@@ -123,7 +123,7 @@ public class LoginForm extends javax.swing.JFrame {
     private void btnLoginForCustomerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginForCustomerActionPerformed
         // TODO add your handling code here:
         String username = tfUserName.getText();
-        String password = tfPassword.getText();
+        String password= String.valueOf(tfPassword.getPassword());
         if (username == null || password == null) {
             showNotification("Bạn phải điền đầy đủ thông tin trước khi đăng nhập", JOptionPane.ERROR_MESSAGE);
         } else {
@@ -140,7 +140,7 @@ public class LoginForm extends javax.swing.JFrame {
     private void btnLoginForLibrarianActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginForLibrarianActionPerformed
         // TODO add your handling code here:
         String username = tfUserName.getText();
-        String password = tfPassword.getText();
+        String password= String.valueOf(tfPassword.getPassword());
         if (username == null || password == null) {
             showNotification("Bạn phải điền đầy đủ thông tin trước khi đăng nhập", JOptionPane.ERROR_MESSAGE);
         } else {
